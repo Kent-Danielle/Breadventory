@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Export anon function to initialize and connect to MongoDB
 module.exports = () => {
   mongoose
     .connect(process.env.MONGODB_URI, {
@@ -13,7 +14,7 @@ module.exports = () => {
       console.log('Mongodb connected....');
     })
     .catch(err => console.log(err.message));
-
+    
   mongoose.connection.on('connected', () => {
     console.log('Mongoose connected to db...');
   });
