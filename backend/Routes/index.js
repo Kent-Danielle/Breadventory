@@ -10,29 +10,6 @@ const router = express.Router();
 const User = require("../Models/user");
 const user = require("../Models/user");
 
-router.get("/", (req, res) => {
-	if (req.session.loggedIn) {
-		res.redirect("/homepage");
-	} else {
-		res.redirect("/login");
-	}
-});
-
-router.get("/login", (req, res) => {
-	if (req.session.loggedIn) {
-		res.redirect("/homepage");
-	} else {
-		res.send("ur not logged in yet bro, ur in the theoretical login page");
-	}
-});
-
-router.get("/homepage", (req, res) => {
-	if (req.session.loggedIn) {
-		res.send("Already logged in bro");
-	} else {
-		res.redirect("/login");
-	}
-});
 
 router.post("/logout", (req, res) => {
 	if (req.session.loggedIn) {
@@ -49,10 +26,6 @@ router.post("/logout", (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-	if (req.session.loggedIn) {
-		res.redirect("/homepage");
-	}
-
 	// Destructure req.body properties into var
 	const { username, password } = req.body;
 	// Find the username
@@ -68,12 +41,13 @@ router.post("/login", async (req, res) => {
 		if (isCorrectPassword) {
 			req.session.loggedIn = true;
 			req.session.username = username;
-			res.redirect("/homepage");
+			
+			res.json({loggedIn: true});
 		} else {
 			throw "Authentication Failed";
 		}
 	} catch (e) {
-		res.status(500).send(e);
+		res.status(500).json({loggedIn: false, error: e});
 	}
 });
 
