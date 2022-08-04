@@ -1,6 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ReactSession } from "react-client-session";
 
 function Login() {
+	const navigate = useNavigate()
+
+	// Redirect user if they're logged in or not
+	useEffect(() => {
+		const isLoggedIn = ReactSession.get("loggedIn")
+
+		if (isLoggedIn) {
+			navigate("/home")
+		} else {
+			navigate("/login")
+		}
+	}, [])
+
 	// Set state for input fields
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -29,10 +44,10 @@ function Login() {
 		const data = await response.json();
 
 		if (data.loggedIn) {
-			localStorage.setItem("loggedIn", true);
-			window.location.href = "/home";
+			ReactSession.set("loggedIn", true);
+			navigate("/home")
 		} else {
-			setError(data.e);
+			setError(data.error);
 		}
 	}
 
