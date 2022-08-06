@@ -30,9 +30,11 @@ app.use(express.json())
 
 // Access routers
 const indexRouter = require("./Routes/index");
+const dataRouter = require("./Routes/data");
 
 // Server routes
 app.use("/", indexRouter);
+app.use("/data", dataRouter);
 
 // Run server
 let port = process.env.PORT || 8000;

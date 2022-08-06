@@ -14,11 +14,12 @@ const breadSchema = new mongoose.Schema({
 	bread: {
 		type: String,
 		required: true,
+		unique: true
 	},
 	category: {
-		type: String
+		type: String,
 	},
-	orderHistory: orderSchema,
+	orderHistory: [orderSchema],
 });
 
-module.exports = mongoose.model("user", userSchema);
+module.exports = mongoose.model("bread", breadSchema);
