@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
-	sunday: { type: Number },
-	monday: { type: Number },
-	tuesday: { type: Number },
-	wednesday: { type: Number },
-	thursday: { type: Number },
-	friday: { type: Number },
-	saturday: { type: Number },
+	sunday: { type: mongoose.Schema.Types.Mixed, default: NaN },
+	monday: { type: mongoose.Schema.Types.Mixed, default: NaN },
+	tuesday: { type: mongoose.Schema.Types.Mixed, default: NaN },
+	wednesday: { type: mongoose.Schema.Types.Mixed, default: NaN },
+	thursday: { type: mongoose.Schema.Types.Mixed, default: NaN },
+	friday: { type: mongoose.Schema.Types.Mixed, default: NaN },
+	saturday: { type: mongoose.Schema.Types.Mixed, default: NaN },
 });
 
 const breadSchema = new mongoose.Schema({
 	bread: {
 		type: String,
 		required: true,
-		unique: true
+		unique: true,
 	},
 	category: {
 		type: String,
