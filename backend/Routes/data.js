@@ -7,6 +7,7 @@ const router = express.Router();
  * Mongoose Schema
  */
 const Bread = require("../Models/bread");
+const Order = require("../Models/order");
 
 const DAYS = [
 	"sunday",
@@ -17,10 +18,6 @@ const DAYS = [
 	"friday",
 	"saturday",
 ];
-
-router.post("/test", (req, res) => {
-	res.json("Hello");
-});
 
 router.post("/addBread", async (req, res) => {
 	try {
@@ -38,34 +35,34 @@ router.post("/addBread", async (req, res) => {
 	}
 });
 
+function getPreviousSunday(date = new Date()) {
+	const previousMonday = new Date();
+	previousMonday.setDate(date.getDate() - date.getDay());
+	previousMonday.setHours(0, 0, 0, 0);
+	return previousMonday;
+}
+
 router.post("/addOrder", async (req, res) => {
+	const date = new Date();
+	const day = DAYS[date.getDay()];
+	const weekOf = getPreviousSunday(date);
+
+	const { bread, order } = req.body;
+
 	try {
-		const order = {
-			[day]: req.body.order,
-		};
+		const newOrder = await Order.findOneAndUpdate(
+			{ $and: [{ bread: bread }, { weekOf: weekOf }] },
+			{ [day]: order },
+			{ upsert: true, new: true, setDefaultsOnInsert: true }
+		);
 
-		console.log(order);
+		await Bread.updateOne(
+			{ bread: bread },
+			{ $push: { orderHistory: newOrder._id } }
+		);
 
-		const bread = await Bread.findOne({ bread: req.body.bread });
-
-		const length = bread.orderHistory.length;
-
-		if (length < 1 || bread.orderHistory[length - 1].saturday != NaN) {
-			// Push a new array
-			const updatedBread = await Bread.findOneAndUpdate(
-				{ bread: req.body.bread },
-				{ $push: { orderHistory: order } },
-				{ new: true }
-			);
-		} else {
-			// Update the existing array
-			bread.orderHistory[length - 1].day = req.body.order;
-
-			await bread.save();
-		}
-		res.send("SuccessF");
+		res.send(newOrder)
 	} catch (err) {
-		console.log(err, "error");
 		res.send(err);
 	}
 });
