@@ -18,7 +18,7 @@ app.use(cors())
 app.use(
 	session({
 		secret: "hvlhjlakdjnclkasjnvjkadfaksdfcnvlchwjjdndsjsjjsj",
-		name: "BuddyUpSession",
+		name: "LFMSession",
 		resave: false,
 		cookie: {
 			maxAge: ONE_DAY,
