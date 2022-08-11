@@ -61,7 +61,36 @@ router.post("/addOrder", async (req, res) => {
 			{ $push: { orderHistory: newOrder._id } }
 		);
 
-		res.send(newOrder)
+		res.send(newOrder);
+	} catch (err) {
+		res.send(err);
+	}
+});
+
+router.get("/getBreads", async (req, res) => {
+	try {
+		const result = await Bread.aggregate([
+			{
+				$group: {
+					_id: "$category",
+					records: {
+						$push: "$$ROOT",
+					},
+				},
+			},
+		]);
+		res.send(result);
+	} catch (err) {
+		res.send(err);
+	}
+});
+
+router.get("/getOrders", async (req, res) => {
+	const date = new Date();
+	const weekOf = getPreviousSunday(date);
+	try {
+		const result = await Order.find({ weekOf: weekOf });
+		res.send(result);
 	} catch (err) {
 		res.send(err);
 	}

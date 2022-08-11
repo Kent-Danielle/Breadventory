@@ -7,6 +7,8 @@ import CollapsibleTable from "./CollapsibleTable";
 
 function Login() {
 	const navigate = useNavigate();
+	let [breads, setBreads] = useState([]);
+	let [orders, setOrders] = useState([]);
 
 	// Redirect user if they're logged in or not
 	useEffect(() => {
@@ -17,6 +19,25 @@ function Login() {
 		} else {
 			navigate("/login");
 		}
+
+		async function fetchBread() {
+			const response1 = await fetch("/data/getBreads", {
+				method: "GET",
+			});
+
+			const result1 = await response1.json();
+
+			const response2 = await fetch("/data/getOrders", {
+				method: "GET",
+			});
+
+			const result2 = await response2.json();
+
+			setBreads(result1);
+			setOrders(result2);
+		}
+
+		fetchBread();
 	}, []);
 
 	return (
@@ -26,8 +47,10 @@ function Login() {
 				width={["30em", "48em"]}
 				padding={["1.4em", "2em"]}
 				direction={"column"}
+				overflowY={"scroll"}
 			>
 				<Button
+					opacity={0.85}
 					alignSelf={"flex-start"}
 					mb={"2em"}
 					borderRadius={"full"}
@@ -37,7 +60,14 @@ function Login() {
 				>
 					Add Bread
 				</Button>
-				<CollapsibleTable />
+				{breads.map((bread, index) => {
+					return <CollapsibleTable
+						key={index}
+						breadCategory={bread._id}
+						breads={bread.records}
+						orders={orders}
+					/>;
+				})}
 			</Flex>
 		</Flex>
 	);

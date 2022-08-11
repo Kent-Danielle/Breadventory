@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   bread: {type: String, required: true},
-	weekOf: { type: Date, required: true, unique: true },
+	weekOf: { type: Date, required: true},
 	sunday: { type: mongoose.Schema.Types.Mixed, default: NaN },
 	monday: { type: mongoose.Schema.Types.Mixed, default: NaN },
 	tuesday: { type: mongoose.Schema.Types.Mixed, default: NaN },

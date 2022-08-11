@@ -17,8 +17,20 @@ import {
 	TableCaption,
 	TableContainer,
 } from "@chakra-ui/react";
+import TableRow from "./TableRow";
 
 function CollapsibleTable(props) {
+	console.log("hi");
+	let breadSet = new Set();
+
+	props.breads.forEach((element) => {
+		breadSet.add(element.bread);
+	});
+
+	let breadOrder = props.orders.filter(function (order) {
+		return breadSet.has(order.bread);
+	});
+
 	return (
 		<Accordion allowMultiple mb={"1em"}>
 			<AccordionItem border={"none"} borderRadius={"lg"}>
@@ -26,7 +38,7 @@ function CollapsibleTable(props) {
 					<AccordionButton>
 						<AccordionIcon />
 						<Box ms={"1em"} flex="1" textAlign="left">
-							Bread Category
+							{props.breadCategory}
 						</Box>
 					</AccordionButton>
 				</h2>
@@ -46,36 +58,19 @@ function CollapsibleTable(props) {
 								</Tr>
 							</Thead>
 							<Tbody>
-								<Tr>
-									<Td>Bread</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-								</Tr>
-								<Tr>
-									<Td>Bread</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-								</Tr>
-								<Tr>
-									<Td>Bread</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-									<Td isNumeric>5</Td>
-								</Tr>
+								{breadOrder.map((bread, index) => (
+									<TableRow
+										key={index}
+										breadName={bread.bread}
+										sundayOrder={bread.sunday}
+										mondayOrder={bread.monday}
+										tuesdayOrder={bread.tuesday}
+										wednesdayOrder={bread.wednesday}
+										thursdayOrder={bread.thursday}
+										fridayOrder={bread.friday}
+										saturdayOrder={bread.saturday}
+									/>
+								))}
 							</Tbody>
 						</Table>
 					</TableContainer>
