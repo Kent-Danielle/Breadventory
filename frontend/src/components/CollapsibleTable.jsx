@@ -20,7 +20,6 @@ import {
 import TableRow from "./TableRow";
 
 function CollapsibleTable(props) {
-	console.log("hi");
 	let breadSet = new Set();
 
 	props.breads.forEach((element) => {
@@ -35,7 +34,7 @@ function CollapsibleTable(props) {
 		<Accordion allowMultiple mb={"1em"}>
 			<AccordionItem border={"none"} borderRadius={"lg"}>
 				<h2>
-					<AccordionButton>
+					<AccordionButton bg={"carbon.300"} boxShadow={"xl"} opacity={0.85} borderRadius={"md"}> 
 						<AccordionIcon />
 						<Box ms={"1em"} flex="1" textAlign="left">
 							{props.breadCategory}
@@ -44,7 +43,7 @@ function CollapsibleTable(props) {
 				</h2>
 				<AccordionPanel pb={4}>
 					<TableContainer>
-						<Table variant="simpleF">
+						<Table>
 							<Thead>
 								<Tr>
 									<Th></Th>

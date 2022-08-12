@@ -41,7 +41,7 @@ function Login() {
 	}, []);
 
 	return (
-		<Flex justifyContent={"center"} bgColor="#FF6600" height={"100%"}>
+		<Flex justifyContent={"center"} height={"100%"}>
 			<Flex
 				bgColor="gray.50"
 				width={["30em", "48em"]}
@@ -55,18 +55,22 @@ function Login() {
 					mb={"2em"}
 					borderRadius={"full"}
 					px={"1.5em"}
+					py={"1em"}
 					bgColor="#FF6600"
 					color="white"
+					boxShadow={"xl"}
 				>
 					Add Bread
 				</Button>
 				{breads.map((bread, index) => {
-					return <CollapsibleTable
-						key={index}
-						breadCategory={bread._id}
-						breads={bread.records}
-						orders={orders}
-					/>;
+					return (
+						<CollapsibleTable
+							key={index}
+							breadCategory={bread._id}
+							breads={bread.records}
+							orders={orders}
+						/>
+					);
 				})}
 			</Flex>
 		</Flex>
