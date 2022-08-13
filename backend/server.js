@@ -18,7 +18,7 @@ app.use(cors())
 app.use(
 	session({
 		secret: "hvlhjlakdjnclkasjnvjkadfaksdfcnvlchwjjdndsjsjjsj",
-		name: "BuddyUpSession",
+		name: "LFMSession",
 		resave: false,
 		cookie: {
 			maxAge: ONE_DAY,
@@ -30,9 +30,11 @@ app.use(express.json())
 
 // Access routers
 const indexRouter = require("./Routes/index");
+const dataRouter = require("./Routes/data");
 
 // Server routes
 app.use("/", indexRouter);
+app.use("/data", dataRouter);
 
 // Run server
 let port = process.env.PORT || 8000;
