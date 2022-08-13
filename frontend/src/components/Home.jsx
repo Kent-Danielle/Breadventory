@@ -56,7 +56,7 @@ function Login() {
 					borderRadius={"full"}
 					px={"1.5em"}
 					py={"1em"}
-					bgColor="#FF6600"
+					bgColor={"carbon.400"}
 					color="white"
 					boxShadow={"xl"}
 				>

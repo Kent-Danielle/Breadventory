@@ -68,6 +68,8 @@ router.post("/addOrder", async (req, res) => {
 });
 
 router.get("/getBreads", async (req, res) => {
+	const sortOrder = ["Not Cooled", "Cooled", "Loafs", "Cookies", "Assorted"];
+
 	try {
 		const result = await Bread.aggregate([
 			{
@@ -79,6 +81,11 @@ router.get("/getBreads", async (req, res) => {
 				},
 			},
 		]);
+
+		result.sort(function (a, b) {
+			return sortOrder.indexOf(a._id) - sortOrder.indexOf(b._id);
+		});
+
 		res.send(result);
 	} catch (err) {
 		res.send(err);

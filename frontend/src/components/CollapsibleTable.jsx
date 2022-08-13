@@ -34,7 +34,16 @@ function CollapsibleTable(props) {
 		<Accordion allowMultiple mb={"1em"}>
 			<AccordionItem border={"none"} borderRadius={"lg"}>
 				<h2>
-					<AccordionButton bg={"carbon.300"} boxShadow={"xl"} opacity={0.85} borderRadius={"md"}> 
+					<AccordionButton
+						bg={"carbon.400"}
+						boxShadow={"xl"}
+						color={"white "}
+						opacity={0.85}
+						borderRadius={"md"}
+						_hover={{
+							bg: "carbon.500",
+						}}
+					>
 						<AccordionIcon />
 						<Box ms={"1em"} flex="1" textAlign="left">
 							{props.breadCategory}
