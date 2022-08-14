@@ -5,7 +5,7 @@ import { Flex, Spacer } from "@chakra-ui/react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import CollapsibleTable from "./CollapsibleTable";
 
-function Login() {
+function Home() {
 	const navigate = useNavigate();
 	let [breads, setBreads] = useState([]);
 	let [orders, setOrders] = useState([]);
@@ -77,4 +77,4 @@ function Login() {
 	);
 }
 
-export default Login;
+export default Home;
