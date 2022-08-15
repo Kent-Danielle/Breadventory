@@ -9,6 +9,10 @@ const router = express.Router();
 const Bread = require("../Models/bread");
 const Order = require("../Models/order");
 
+function sleep(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const DAYS = [
 	"sunday",
 	"monday",
@@ -96,10 +100,31 @@ router.get("/getOrders", async (req, res) => {
 	const date = new Date();
 	const weekOf = getPreviousSunday(date);
 	try {
-		const result = await Order.find({ weekOf: weekOf });
-		res.send(result);
+		let breads = await Bread.find({});
+		let weekOrders = await Order.find({ weekOf: weekOf });
+
+		let orderSet = new Set();
+
+		weekOrders.forEach((weekOrder) => {
+			orderSet.add(weekOrder.bread);
+		});
+
+		breads.forEach(async (bread) => {
+			if (!orderSet.has(bread.bread)) {
+				console.log("Adding");
+				const newOrder = new Order({ bread: bread.bread, weekOf, weekOf });
+				await newOrder.save();
+			}
+		});
+
+		await sleep(10);
+
+		weekOrders = await Order.find({ weekOf: weekOf });
+
+		res.send(weekOrders);
 	} catch (err) {
-		res.send(err);
+		console.log(err);
+		res.send({ error: err, msg: "hi" });
 	}
 });
 

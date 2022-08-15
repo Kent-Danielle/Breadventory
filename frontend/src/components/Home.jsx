@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ReactSession } from "react-client-session";
 import { Flex, Spacer } from "@chakra-ui/react";
-import { Button, ButtonGroup } from "@chakra-ui/react";
+import { Button, Box } from "@chakra-ui/react";
 import CollapsibleTable from "./CollapsibleTable";
 
 function Home() {
@@ -41,39 +41,34 @@ function Home() {
 	}, []);
 
 	return (
-		<Flex justifyContent={"center"} height={"100%"}>
-			<Flex
-				bgColor="gray.50"
-				width={["30em", "48em"]}
-				padding={["1.4em", "2em"]}
-				direction={"column"}
-				overflowY={"scroll"}
+		<Box>
+			<Button
+				opacity={0.85}
+				alignSelf={"flex-start"}
+				mb={"2em"}
+				borderRadius={"full"}
+				px={"1.5em"}
+				py={"1em"}
+				bgColor={"carbon.400"}
+				color="white"
+				boxShadow={"xl"}
+				onClick={() => {
+					navigate("/formpage");
+				}}
 			>
-				<Button
-					opacity={0.85}
-					alignSelf={"flex-start"}
-					mb={"2em"}
-					borderRadius={"full"}
-					px={"1.5em"}
-					py={"1em"}
-					bgColor={"carbon.400"}
-					color="white"
-					boxShadow={"xl"}
-				>
-					Add Bread
-				</Button>
-				{breads.map((bread, index) => {
-					return (
-						<CollapsibleTable
-							key={index}
-							breadCategory={bread._id}
-							breads={bread.records}
-							orders={orders}
-						/>
-					);
-				})}
-			</Flex>
-		</Flex>
+				Order Bread
+			</Button>
+			{breads.map((bread, index) => {
+				return (
+					<CollapsibleTable
+						key={index}
+						breadCategory={bread._id}
+						breads={bread.records}
+						orders={orders}
+					/>
+				);
+			})}
+		</Box>
 	);
 }
 

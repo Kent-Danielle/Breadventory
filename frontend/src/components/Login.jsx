@@ -34,7 +34,6 @@ function Login() {
 				password: Yup.string().required("Password is too short"),
 			})}
 			onSubmit={async (values) => {
-				console.log(values);
 				const { username, password } = values;
 				const response = await fetch("/login", {
 					method: "POST",
