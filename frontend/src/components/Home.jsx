@@ -62,6 +62,7 @@ function Home() {
 				return (
 					<CollapsibleTable
 						key={index}
+						variant="form"
 						breadCategory={bread._id}
 						breads={bread.records}
 						orders={orders}

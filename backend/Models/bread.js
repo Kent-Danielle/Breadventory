@@ -6,6 +6,14 @@ const breadSchema = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
+	yesterdayOrder: {
+		type: mongoose.Schema.Types.Mixed,
+		default: NaN,
+	},
+	todayOrder: {
+		type: mongoose.Schema.Types.Mixed,
+		default: NaN,
+	},
 	category: {
 		type: String,
 	},

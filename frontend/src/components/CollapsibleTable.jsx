@@ -18,6 +18,7 @@ import {
 	TableContainer,
 } from "@chakra-ui/react";
 import TableRow from "./TableRow";
+import BreadInput from "./BreadInput";
 
 function CollapsibleTable(props) {
 	let breadSet = new Set();
@@ -51,37 +52,47 @@ function CollapsibleTable(props) {
 					</AccordionButton>
 				</h2>
 				<AccordionPanel pb={4}>
-					<TableContainer>
-						<Table>
-							<Thead>
-								<Tr>
-									<Th></Th>
-									<Th>Sn</Th>
-									<Th>M</Th>
-									<Th>T</Th>
-									<Th>W</Th>
-									<Th>Th</Th>
-									<Th>F</Th>
-									<Th>St</Th>
-								</Tr>
-							</Thead>
-							<Tbody>
-								{breadOrder.map((bread, index) => (
-									<TableRow
-										key={index}
-										breadName={bread.bread}
-										sundayOrder={bread.sunday}
-										mondayOrder={bread.monday}
-										tuesdayOrder={bread.tuesday}
-										wednesdayOrder={bread.wednesday}
-										thursdayOrder={bread.thursday}
-										fridayOrder={bread.friday}
-										saturdayOrder={bread.saturday}
-									/>
-								))}
-							</Tbody>
-						</Table>
-					</TableContainer>
+					{props.variant === "home" ? (
+						<TableContainer>
+							<Table>
+								<Thead>
+									<Tr>
+										<Th></Th>
+										<Th>Sn</Th>
+										<Th>M</Th>
+										<Th>T</Th>
+										<Th>W</Th>
+										<Th>Th</Th>
+										<Th>F</Th>
+										<Th>St</Th>
+									</Tr>
+								</Thead>
+								<Tbody>
+									{breadOrder.map((bread, index) => (
+										<TableRow
+											key={index}
+											breadName={bread.bread}
+											sundayOrder={bread.sunday}
+											mondayOrder={bread.monday}
+											tuesdayOrder={bread.tuesday}
+											wednesdayOrder={bread.wednesday}
+											thursdayOrder={bread.thursday}
+											fridayOrder={bread.friday}
+											saturdayOrder={bread.saturday}
+										/>
+									))}
+								</Tbody>
+							</Table>
+						</TableContainer>
+					) : props.variant === "form" ? (
+						<>
+							{breadOrder.map((bread, index) => {
+								return <BreadInput bread={bread.bread} key={index} />;
+							})}
+						</>
+					) : (
+						<></>
+					)}
 				</AccordionPanel>
 			</AccordionItem>
 		</Accordion>

@@ -10,6 +10,24 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CheckIcon } from "@chakra-ui/icons";
+import PreviousOrderForm from "./PreviousOrderForm";
+import SaleStatusForm from "./SaleStatusForm";
+import EditOrderForm from "./EditOrderForm";
+
+function getStepContent(step) {
+	switch (step) {
+		case 0:
+			return <PreviousOrderForm />;
+		case 1:
+			return <SaleStatusForm />;
+		case 2:
+			return <EditOrderForm />;
+		default:
+			throw new Error("Unknown step");
+	}
+}
+
+const steps = ["Previous Order", "Sale Status", "Edit Order"];
 
 function FormPage() {
 	const [step, setStep] = useState(0);
@@ -41,7 +59,7 @@ function FormPage() {
 			>
 				Return
 			</Button>
-			<Flex justifyContent={"space-around"}>
+			<Flex justifyContent={"space-around"} mb={["2rem"]}>
 				<VStack w={"7em"}>
 					<Center
 						h={["2.5rem", "3rem"]}
@@ -95,14 +113,31 @@ function FormPage() {
 					</Heading>
 				</VStack>
 			</Flex>
-			<ButtonGroup justifySelf={"flex-end"} alignSelf={"center"} spacing="6">
-				<Button disabled={step === 0} onClick={handleBack}>
-					Back
-				</Button>
-				<Button disabled={step > 2} onClick={handleNext}>
-					{step === 2 ? "Submit" : "Next"}
-				</Button>
-			</ButtonGroup>
+			<>
+				{step === steps.length ? (
+					<>
+						<Heading>tysm</Heading>
+					</>
+				) : (
+					<>
+						<Flex direction={"column"} as="form">
+							{getStepContent(step)}
+							<ButtonGroup
+								justifySelf={"flex-end"}
+								alignSelf={"center"}
+								spacing="6"
+							>
+								<Button disabled={step === 0} onClick={handleBack}>
+									Back
+								</Button>
+								<Button disabled={step > 2} onClick={handleNext}>
+									{step === 2 ? "Submit" : "Next"}
+								</Button>
+							</ButtonGroup>
+						</Flex>
+					</>
+				)}
+			</>
 		</>
 	);
 }
