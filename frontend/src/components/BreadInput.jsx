@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
 	Flex,
 	Text,
@@ -13,20 +13,30 @@ import {
 	SliderThumb,
 	Tooltip,
 } from "@chakra-ui/react";
+import { OrderContext } from "./FormPage";
 
 function BreadInput(props) {
-	const [value, setValue] = useState(30);
+	const { prevOrder, setPrevOrder } = useContext(OrderContext);
+	const [value, setValue] = useState(prevOrder[props.bread]);
 	const [showTooltip, setShowTooltip] = useState(false);
 
+	function handleChange(value) {
+		setValue(value);
+
+		setPrevOrder((prev) => ({ ...prev, [props.bread]: value }));
+	}
+
 	return (
-		<Flex mt={["1rem"]} flexWrap={"wrap"} justifyContent={"space-between"}> 
-			<Text alignItems={"center"} display={"flex"} fontSize={["md", "lg"]}>{props.bread}</Text>
+		<Flex mt={["1rem"]} flexWrap={"wrap"} justifyContent={"space-between"}>
+			<Text alignItems={"center"} display={"flex"} fontSize={["md", "lg"]}>
+				{props.bread}
+			</Text>
 			<NumberInput
 				w={["25%", "15%"]}
 				size={["sm", "md"]}
 				min={0}
 				max={100}
-				onChange={(value) => setValue(value)}
+				onChange={handleChange}
 				defaultValue={value}
 				value={value}
 			>
@@ -41,7 +51,7 @@ function BreadInput(props) {
 				w="100%"
 				min={0}
 				max={100}
-				onChange={(value) => setValue(value)}
+				onChange={handleChange}
 				value={value}
 				defaultValue={value}
 				onMouseEnter={() => setShowTooltip(true)}

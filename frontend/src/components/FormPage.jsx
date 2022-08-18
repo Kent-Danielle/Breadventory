@@ -8,7 +8,7 @@ import {
 	ButtonGroup,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { createContext, useState } from "react";
 import { CheckIcon } from "@chakra-ui/icons";
 import PreviousOrderForm from "./PreviousOrderForm";
 import SaleStatusForm from "./SaleStatusForm";
@@ -27,9 +27,12 @@ function getStepContent(step) {
 	}
 }
 
+export const OrderContext = createContext(null);
+
 const steps = ["Previous Order", "Sale Status", "Edit Order"];
 
 function FormPage() {
+	const [prevOrder, setPrevOrder] = useState({})
 	const [step, setStep] = useState(0);
 
 	const handleNext = () => {
@@ -120,21 +123,32 @@ function FormPage() {
 					</>
 				) : (
 					<>
-						<Flex direction={"column"} as="form">
-							{getStepContent(step)}
-							<ButtonGroup
-								justifySelf={"flex-end"}
-								alignSelf={"center"}
-								spacing="6"
-							>
-								<Button disabled={step === 0} onClick={handleBack}>
-									Back
-								</Button>
-								<Button disabled={step > 2} onClick={handleNext}>
-									{step === 2 ? "Submit" : "Next"}
-								</Button>
-							</ButtonGroup>
-						</Flex>
+						<OrderContext.Provider value={{prevOrder, setPrevOrder}}>
+							<Flex direction={"column"} as="form">
+								{getStepContent(step)}
+							</Flex>
+						</OrderContext.Provider>
+
+						<ButtonGroup
+							display={"flex"}
+							position={"fixed"}
+							width={"100%"}
+							bottom={0}
+							bg={"white"}
+							p={"1rem"}
+							justifyContent={"center"}
+							justifySelf={"flex-end"}
+							alignSelf={"center"}
+							spacing="6"
+							zIndex={99}
+						>
+							<Button disabled={step === 0} onClick={handleBack}>
+								Back
+							</Button>
+							<Button disabled={step > 2} onClick={handleNext}>
+								{step === 2 ? "Submit" : "Next"}
+							</Button>
+						</ButtonGroup>
 					</>
 				)}
 			</>

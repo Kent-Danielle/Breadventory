@@ -19,14 +19,31 @@ import {
 	SliderMark,
 	Tooltip,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import CollapsibleTable from "./CollapsibleTable";
+import { OrderContext } from "./FormPage";
+
+const DAYS = [
+	"sunday",
+	"monday",
+	"tuesday",
+	"wednesday",
+	"thursday",
+	"friday",
+	"saturday",
+];
 
 function PreviousOrderForm(props) {
+	const { prevOrder, setPrevOrder } = useContext(OrderContext);
+
 	let [breads, setBreads] = useState([]);
 	let [orders, setOrders] = useState([]);
 
 	useEffect(() => {
+		let tempOrder = {};
+		const date = new Date();
+		const day = DAYS[date.getDay()];
+
 		async function fetchBread() {
 			const response1 = await fetch("/data/getBreads", {
 				method: "GET",
@@ -42,6 +59,13 @@ function PreviousOrderForm(props) {
 
 			setBreads(result1);
 			setOrders(result2);
+
+			result2.forEach((order) => {
+				tempOrder[order.bread] = order[day] === null ? 0 : order[day]
+			});
+
+			console.log(tempOrder)
+			setPrevOrder((prev) => ({...prev, ...tempOrder}))
 		}
 
 		fetchBread();

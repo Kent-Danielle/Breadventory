@@ -15,7 +15,7 @@ function App() {
 		<ChakraProvider resetCSS theme={theme}>
 			<Flex justifyContent={"center"} height={"100%"}>
 				<Flex
-					bgColor="gray.50"
+					bgColor="white"
 					width={["30em", "48em"]}
 					padding={["1.4em", "2em"]}
 					direction={"column"}
