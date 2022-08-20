@@ -18,32 +18,22 @@ import {
 	SliderThumb,
 	SliderMark,
 	Tooltip,
+	Heading,
 } from "@chakra-ui/react";
 import { useState, useEffect, useContext } from "react";
 import CollapsibleTable from "./CollapsibleTable";
 import { OrderContext } from "./FormPage";
 
-const DAYS = [
-	"sunday",
-	"monday",
-	"tuesday",
-	"wednesday",
-	"thursday",
-	"friday",
-	"saturday",
-];
-
 function PreviousOrderForm(props) {
-	const { prevOrder, setPrevOrder } = useContext(OrderContext);
+	const { prevOrder, setPrevOrder, loaded, setLoaded } =
+		useContext(OrderContext);
 
 	let [breads, setBreads] = useState([]);
 	let [orders, setOrders] = useState([]);
+	let [isEmpty, setIsEmpty] = useState(false);
 
 	useEffect(() => {
 		let tempOrder = {};
-		const date = new Date();
-		const day = DAYS[date.getDay()];
-
 		async function fetchBread() {
 			const response1 = await fetch("/data/getBreads", {
 				method: "GET",
@@ -51,21 +41,24 @@ function PreviousOrderForm(props) {
 
 			const result1 = await response1.json();
 
-			const response2 = await fetch("/data/getOrders", {
+			const response2 = await fetch("/data/getPrevOrders", {
 				method: "GET",
 			});
 
-			const result2 = await response2.json();
+			const { weekOrders, day } = await response2.json();
 
 			setBreads(result1);
-			setOrders(result2);
+			setOrders(weekOrders);
 
-			result2.forEach((order) => {
-				tempOrder[order.bread] = order[day] === null ? 0 : order[day]
+			weekOrders.forEach((order) => {
+				if (order[day] === null) {
+					setIsEmpty(true);
+				}
+				tempOrder[order.bread] = order[day] === null ? 0 : order[day];
 			});
 
-			console.log(tempOrder)
-			setPrevOrder((prev) => ({...prev, ...tempOrder}))
+			setPrevOrder((prev) => ({ ...prev, ...tempOrder }));
+			setLoaded(true);
 		}
 
 		fetchBread();
@@ -73,17 +66,21 @@ function PreviousOrderForm(props) {
 
 	return (
 		<>
-			{breads.map((bread, index) => {
-				return (
-					<CollapsibleTable
-						key={index}
-						variant="form"
-						breadCategory={bread._id}
-						breads={bread.records}
-						orders={orders}
-					/>
-				);
-			})}
+			{isEmpty ? (
+				breads.map((bread, index) => {
+					return (
+						<CollapsibleTable
+							key={index}
+							variant="form"
+							breadCategory={bread._id}
+							breads={bread.records}
+							orders={orders}
+						/>
+					);
+				})
+			) : (
+				<Heading>Already ordered</Heading>
+			)}
 		</>
 	);
 }

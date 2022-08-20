@@ -20,7 +20,7 @@ import {
 import TableRow from "./TableRow";
 import BreadInput from "./BreadInput";
 
-function CollapsibleTable(props) {
+function CollapsibleTable(props)  {
 	let breadSet = new Set();
 
 	props.breads.forEach((element) => {

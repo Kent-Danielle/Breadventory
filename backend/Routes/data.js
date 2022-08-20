@@ -128,4 +128,70 @@ router.get("/getOrders", async (req, res) => {
 	}
 });
 
+router.get("/getPrevOrders", async (req, res) => {
+	let date = new Date();
+	date.setDate(date.getDate() - 1);
+	let day = DAYS[date.getDay()];
+	const weekOf = getPreviousSunday(date);
+
+	try {
+		let breads = await Bread.find({});
+		let weekOrders = await Order.find({ weekOf: weekOf });
+
+		let orderSet = new Set();
+
+		weekOrders.forEach((weekOrder) => {
+			orderSet.add(weekOrder.bread);
+		});
+
+		breads.forEach(async (bread) => {
+			if (!orderSet.has(bread.bread)) {
+				console.log("Adding");
+				const newOrder = new Order({ bread: bread.bread, weekOf, weekOf });
+				await newOrder.save();
+			}
+		});
+
+		await sleep(10);
+
+		weekOrders = await Order.find({ weekOf: weekOf });
+
+		console.log(day, weekOf);
+
+		res.send({ weekOrders: weekOrders, day: day });
+	} catch (err) {
+		console.log(err);
+		res.send({ error: err, msg: "hi" });
+	}
+});
+
+router.post("/addPrevOrders", (req, res) => {
+	let date = new Date();
+	date.setDate(date.getDate() - 1);
+	let day = DAYS[date.getDay()];
+	const weekOf = getPreviousSunday(date);
+
+	const prevOrders = req.body;
+
+	Object.keys(prevOrders).forEach(async (bread) => {
+		try {
+			const prevOrder = await Order.findOneAndUpdate(
+				{ $and: [{ bread: bread }, { weekOf: weekOf }] },
+				{ [day]: prevOrders[bread] },
+				{ upsert: true, new: true, setDefaultsOnInsert: true }
+			);
+
+			await Bread.updateOne(
+				{ bread: bread },
+				{ $push: { orderHistory: prevOrder._id } }
+			);
+		} catch (err) {
+			console.log(err);
+			res.send(err);
+		}
+	});
+
+	res.status(200).json();
+});
+
 module.exports = router;

@@ -6,6 +6,7 @@ import {
 	Heading,
 	Center,
 	ButtonGroup,
+	Skeleton,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { createContext, useState } from "react";
@@ -32,14 +33,30 @@ export const OrderContext = createContext(null);
 const steps = ["Previous Order", "Sale Status", "Edit Order"];
 
 function FormPage() {
-	const [prevOrder, setPrevOrder] = useState({})
+	const [loaded, setLoaded] = useState(false);
+	const [prevOrder, setPrevOrder] = useState({});
 	const [step, setStep] = useState(0);
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+
+		const response = await fetch("/data/addPrevOrders", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(prevOrder),
+		});
+
+		handleNext();
+	};
 
 	const handleNext = () => {
 		setStep(step + 1);
 	};
 
 	const handleBack = () => {
+		setLoaded(false)
 		setStep(step - 1);
 	};
 
@@ -123,32 +140,46 @@ function FormPage() {
 					</>
 				) : (
 					<>
-						<OrderContext.Provider value={{prevOrder, setPrevOrder}}>
-							<Flex direction={"column"} as="form">
+						<OrderContext.Provider
+							value={{ prevOrder, setPrevOrder, loaded, setLoaded }}
+						>
+							<Flex
+								onSubmit={handleSubmit}
+								id="OrderForm"
+								direction={"column"}
+								as="form"
+							>
+								<Skeleton
+									display={loaded && "none"}
+									isLoaded={loaded}
+									fadeDuration={4}
+									height={["20rem"]}
+									borderRadius={["lg"]}
+								/>
 								{getStepContent(step)}
+								<Box mb={"5rem"}></Box>
+								<ButtonGroup
+									display={"flex"}
+									position={"fixed"}
+									width={"100%"}
+									bottom={0}
+									bg={"white"}
+									p={"1rem"}
+									justifyContent={"center"}
+									justifySelf={"flex-end"}
+									alignSelf={"center"}
+									spacing="6"
+									zIndex={99}
+								>
+									<Button disabled={step === 0} onClick={handleBack}>
+										Back
+									</Button>
+									<Button disabled={step > 2} type="submit" form="OrderForm">
+										{step === 2 ? "Submit" : "Next"}
+									</Button>
+								</ButtonGroup>
 							</Flex>
 						</OrderContext.Provider>
-
-						<ButtonGroup
-							display={"flex"}
-							position={"fixed"}
-							width={"100%"}
-							bottom={0}
-							bg={"white"}
-							p={"1rem"}
-							justifyContent={"center"}
-							justifySelf={"flex-end"}
-							alignSelf={"center"}
-							spacing="6"
-							zIndex={99}
-						>
-							<Button disabled={step === 0} onClick={handleBack}>
-								Back
-							</Button>
-							<Button disabled={step > 2} onClick={handleNext}>
-								{step === 2 ? "Submit" : "Next"}
-							</Button>
-						</ButtonGroup>
 					</>
 				)}
 			</>

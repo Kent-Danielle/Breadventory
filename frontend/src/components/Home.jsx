@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ReactSession } from "react-client-session";
-import { Flex, Spacer } from "@chakra-ui/react";
 import { Button, Box } from "@chakra-ui/react";
 import CollapsibleTable from "./CollapsibleTable";
 
@@ -62,7 +61,7 @@ function Home() {
 				return (
 					<CollapsibleTable
 						key={index}
-						variant="form"
+						variant="home"
 						breadCategory={bread._id}
 						breads={bread.records}
 						orders={orders}
