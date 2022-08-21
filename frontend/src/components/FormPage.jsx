@@ -48,9 +48,6 @@ function FormPage() {
 			setBreads(fetchBreadResult);
 
 			weekOrders.forEach((order) => {
-				if (order[day] === null) {
-					setIsEmpty(true);
-				}
 				tempOrder[order.bread] = order[day] === null ? 0 : order[day];
 			});
 
@@ -211,7 +208,35 @@ function FormPage() {
 			<>
 				{step === steps.length ? (
 					<>
-						<Heading>tysm</Heading>
+						<Flex
+							alignSelf={"center"}
+							width={["90%"]}
+							height={["auto"]}
+							borderWidth={"2px"}
+							borderRadius={"xl"}
+							boxShadow={"md"}
+							direction={"column"}
+							padding={"1.5rem"}
+						>
+							<Center
+								alignSelf={"center"}
+								borderRadius={"full"}
+								borderColor={"green.300"}
+								borderWidth={"2px"}
+								width={["3.5rem"]}
+								height={["3.5rem"]}
+							>
+								<CheckIcon fontSize={"1.5rem"} color={"green.300"} />
+							</Center>
+							<Heading
+								mt={"0.7rem"}
+								color={"blackAlpha.700"}
+								textAlign={"center"}
+								fontSize={"lg"}
+							>
+								Order Completed!
+							</Heading>
+						</Flex>
 					</>
 				) : (
 					<>
@@ -258,10 +283,19 @@ function FormPage() {
 									spacing="6"
 									zIndex={99}
 								>
-									<Button px={"2rem"} disabled={step === 0} onClick={handleBack}>
+									<Button
+										px={"2rem"}
+										disabled={step === 0}
+										onClick={handleBack}
+									>
 										Back
 									</Button>
-									<Button px={"2rem"} disabled={step > 2} type="submit" form="OrderForm">
+									<Button
+										px={"2rem"}
+										disabled={step > 2}
+										type="submit"
+										form="OrderForm"
+									>
 										{step === 2 ? "Submit" : "Next"}
 									</Button>
 								</ButtonGroup>

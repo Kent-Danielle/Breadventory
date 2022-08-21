@@ -12,7 +12,7 @@ import {
 	SliderFilledTrack,
 	SliderThumb,
 	Tooltip,
-	Box,
+	Center,
 } from "@chakra-ui/react";
 import { FormContext } from "./FormPage";
 
@@ -36,18 +36,25 @@ function BreadInput(props) {
 
 	return (
 		<Flex mt={["1rem"]} flexWrap={"wrap"} justifyContent={"space-between"}>
-			<Text alignItems={"center"} display={"flex"} fontSize={["md", "lg"]}>
-				{props.bread}
-				<Box
-					bg={"gray.400"}
-					color="white"
-					borderRadius={"md"}
-					px={["0.3rem"]}
-					ms={["0.4rem"]}
-				>
-					{prevOrder[props.bread]}
-				</Box>
-			</Text>
+			<Center>
+				<Text alignItems={"center"} display={"flex"} fontSize={["md", "lg"]}>
+					{props.bread}
+				</Text>
+				{step == 2 && (
+					<Text
+						height={"fit-content"}
+						alignItems={"center"}
+						display={"flex"}
+						bg={"gray.400"}
+						color="white"
+						borderRadius={"md"}
+						px={["0.3rem"]}
+						ms={["0.4rem"]}
+					>
+						{prevOrder[props.bread]}
+					</Text>
+				)}
+			</Center>
 
 			<NumberInput
 				w={["25%", "15%"]}

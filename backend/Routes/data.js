@@ -31,17 +31,24 @@ function getPreviousSunday(date = new Date()) {
 }
 
 router.post("/addBread", async (req, res) => {
-	try {
-		const bread = new Bread({
-			bread: req.body.bread,
-			category: req.body.category,
-		});
+	const newBreads = req.body;
 
-		await bread.save();
-		res.send("success");
-	} catch (err) {
-		res.json(err);
-	}
+	newBreads.forEach(async (newBread) => {
+		try {
+			const bread = new Bread({
+				bread: newBread.bread,
+				category: newBread.category,
+				specialAllowance: newBread.specialAllowance,
+				badSellDeduction: newBread.badSellDeduction,
+			});
+
+			await bread.save();
+		} catch (err) {
+			res.json(err);
+		}
+	});
+
+	res.send("success");
 });
 
 router.post("/addOrder", async (req, res) => {
@@ -65,20 +72,29 @@ router.post("/addOrder", async (req, res) => {
 });
 
 router.post("/calculateOrder", async (req, res) => {
-	const SPECIAL_ALLOWANCE = 5;
-	const BAD_SELL_DEDUCTION = 5;
 	const { prevOrder, saleStatus } = req.body;
 	let todayOrders = {};
 
-	Object.keys(prevOrder).forEach((bread) => {
+	for (const bread in prevOrder) {
 		if (saleStatus[bread] == null) {
 			todayOrders[bread] = prevOrder[bread];
-		} else if (saleStatus[bread]) {
-			todayOrders[bread] = prevOrder[bread] + SPECIAL_ALLOWANCE;
-		} else if (!saleStatus[bread]) {
-			todayOrders[bread] = prevOrder[bread] - BAD_SELL_DEDUCTION;
+		} else {
+			console.log("hi");
+			const fetchedBread = await Bread.findOne({
+				bread: bread,
+			});
+
+			const { specialAllowance, badSellDeduction } = fetchedBread;
+
+			console.log(specialAllowance, badSellDeduction);
+
+			if (saleStatus[bread]) {
+				todayOrders[bread] = prevOrder[bread] + specialAllowance;
+			} else if (!saleStatus[bread]) {
+				todayOrders[bread] = prevOrder[bread] - badSellDeduction;
+			}
 		}
-	});
+	}
 
 	res.send(todayOrders);
 });
@@ -106,7 +122,7 @@ router.post("/addTodayOrders", (req, res) => {
 });
 
 router.get("/getBreads", async (req, res) => {
-	const sortOrder = ["Not Cooled", "Cooled", "Loafs", "Cookies", "Assorted"];
+	const sortOrder = ["Not Cooled", "Cooled", "Loaves", "Cookies", "Assorted"];
 
 	try {
 		const result = await Bread.aggregate([

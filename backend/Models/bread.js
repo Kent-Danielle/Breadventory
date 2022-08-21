@@ -6,9 +6,6 @@ const breadSchema = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
-	defaultOrder: {
-		type: Number,
-	},
 	specialAllowance: {
 		type: Number,
 	},
