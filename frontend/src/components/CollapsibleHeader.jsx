@@ -4,6 +4,7 @@ import {
 	AccordionButton,
 	AccordionPanel,
 	AccordionIcon,
+	SlideFade,
 } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 import {
@@ -94,28 +95,30 @@ function CollapsibleHeaders(props) {
 	}
 
 	return (
-		<Accordion allowMultiple mb={"1em"}>
-			<AccordionItem border={"none"} borderRadius={"lg"}>
-				<h2>
-					<AccordionButton
-						bg={"carbon.400"}
-						boxShadow={"xl"}
-						color={"white "}
-						opacity={0.85}
-						borderRadius={"md"}
-						_hover={{
-							bg: "carbon.500",
-						}}
-					>
-						<AccordionIcon />
-						<Box ms={"1em"} flex="1" textAlign="left">
-							{props.breadCategory}
-						</Box>
-					</AccordionButton>
-				</h2>
-				<AccordionPanel pb={4}>{getContent(props.variant)}</AccordionPanel>
-			</AccordionItem>
-		</Accordion>
+		<SlideFade in={true} offsetY={30}>
+			<Accordion allowMultiple mb={"1em"}>
+				<AccordionItem border={"none"} borderRadius={"lg"}>
+					<h2>
+						<AccordionButton
+							bg={"carbon.400"}
+							boxShadow={"xl"}
+							color={"white "}
+							opacity={0.85}
+							borderRadius={"md"}
+							_hover={{
+								bg: "carbon.500",
+							}}
+						>
+							<AccordionIcon />
+							<Box ms={"1em"} flex="1" textAlign="left">
+								{props.breadCategory}
+							</Box>
+						</AccordionButton>
+					</h2>
+					<AccordionPanel pb={4}>{getContent(props.variant)}</AccordionPanel>
+				</AccordionItem>
+			</Accordion>
+		</SlideFade>
 	);
 }
 

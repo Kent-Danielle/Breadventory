@@ -9,6 +9,12 @@ const breadSchema = new mongoose.Schema({
 	defaultOrder: {
 		type: Number,
 	},
+	specialAllowance: {
+		type: Number,
+	},
+	badSellDeduction: {
+		type: Number
+	},
 	category: {
 		type: String,
 	}

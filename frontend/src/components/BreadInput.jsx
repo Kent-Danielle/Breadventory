@@ -12,25 +12,43 @@ import {
 	SliderFilledTrack,
 	SliderThumb,
 	Tooltip,
+	Box,
 } from "@chakra-ui/react";
 import { FormContext } from "./FormPage";
 
 function BreadInput(props) {
-	const { prevOrder, setPrevOrder } = useContext(FormContext);
-	const [value, setValue] = useState(prevOrder[props.bread]);
+	const { prevOrder, setPrevOrder, todayOrders, setTodayOrder, step } =
+		useContext(FormContext);
+	const [value, setValue] = useState(
+		step == 0 ? prevOrder[props.bread] : todayOrders[props.bread]
+	);
 	const [showTooltip, setShowTooltip] = useState(false);
 
 	function handleChange(value) {
 		setValue(value);
 
-		setPrevOrder((prev) => ({ ...prev, [props.bread]: value }));
+		if (step == 0) {
+			setPrevOrder((prev) => ({ ...prev, [props.bread]: value }));
+		} else if (step == 2) {
+			setTodayOrder((prev) => ({ ...prev, [props.bread]: value }));
+		}
 	}
 
 	return (
 		<Flex mt={["1rem"]} flexWrap={"wrap"} justifyContent={"space-between"}>
 			<Text alignItems={"center"} display={"flex"} fontSize={["md", "lg"]}>
 				{props.bread}
+				<Box
+					bg={"gray.400"}
+					color="white"
+					borderRadius={"md"}
+					px={["0.3rem"]}
+					ms={["0.4rem"]}
+				>
+					{prevOrder[props.bread]}
+				</Box>
 			</Text>
+
 			<NumberInput
 				w={["25%", "15%"]}
 				size={["sm", "md"]}

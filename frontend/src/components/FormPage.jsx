@@ -22,11 +22,12 @@ const steps = ["Previous Order", "Sale Status", "Edit Order"];
 function FormPage() {
 	const [loaded, setLoaded] = useState(false);
 	const [prevOrder, setPrevOrder] = useState({});
+	const [todayOrders, setTodayOrder] = useState({});
 	const [saleStatus, setSaleStatus] = useState({});
 	const [step, setStep] = useState(0);
-	let [isEmpty, setIsEmpty] = useState(false);
-	let [breads, setBreads] = useState([]);
-	let [orders, setOrders] = useState([]);
+	const [isEmpty, setIsEmpty] = useState(false);
+	const [breads, setBreads] = useState([]);
+	const [orders, setOrders] = useState([]);
 
 	useEffect(() => {
 		let tempOrder = {};
@@ -52,6 +53,12 @@ function FormPage() {
 				}
 				tempOrder[order.bread] = order[day] === null ? 0 : order[day];
 			});
+
+			setIsEmpty(
+				Object.values(tempOrder).every((quantity) => {
+					return quantity == 0;
+				})
+			);
 
 			setPrevOrder((prev) => ({ ...prev, ...tempOrder }));
 			setLoaded(true);
@@ -80,24 +87,43 @@ function FormPage() {
 
 		switch (step) {
 			case 0:
-				const response = await fetch("/data/addPrevOrders", {
+				const prevOrderResponse = await fetch("/data/addPrevOrders", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify(prevOrder),
-				});
+				}).then(setLoaded(true));
 				break;
 			case 1:
-				console.log(saleStatus);
+				const calculatedOrderResponse = await fetch("/data/calculateOrder", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						prevOrder: prevOrder,
+						saleStatus: saleStatus,
+					}),
+				}).then(setLoaded(true));
+
+				const calculatedOrder = await calculatedOrderResponse.json();
+				setTodayOrder(calculatedOrder);
+
 				break;
 			case 2:
+				const todayOrderResponse = await fetch("/data/addTodayOrders", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(todayOrders),
+				}).then(setLoaded(true));
 				break;
 			default:
 				throw new Error("Unknown step");
 		}
 
-		setLoaded(true);
 		handleNext();
 	};
 
@@ -193,10 +219,13 @@ function FormPage() {
 							value={{
 								prevOrder,
 								setPrevOrder,
+								todayOrders,
+								setTodayOrder,
 								loaded,
 								setLoaded,
 								saleStatus,
 								setSaleStatus,
+								step,
 								breads,
 								orders,
 							}}
@@ -229,10 +258,10 @@ function FormPage() {
 									spacing="6"
 									zIndex={99}
 								>
-									<Button disabled={step === 0} onClick={handleBack}>
+									<Button px={"2rem"} disabled={step === 0} onClick={handleBack}>
 										Back
 									</Button>
-									<Button disabled={step > 2} type="submit" form="OrderForm">
+									<Button px={"2rem"} disabled={step > 2} type="submit" form="OrderForm">
 										{step === 2 ? "Submit" : "Next"}
 									</Button>
 								</ButtonGroup>

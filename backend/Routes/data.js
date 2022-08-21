@@ -23,6 +23,13 @@ const DAYS = [
 	"saturday",
 ];
 
+function getPreviousSunday(date = new Date()) {
+	const previousMonday = new Date();
+	previousMonday.setDate(date.getDate() - date.getDay());
+	previousMonday.setHours(0, 0, 0, 0);
+	return previousMonday;
+}
+
 router.post("/addBread", async (req, res) => {
 	try {
 		const bread = new Bread({
@@ -36,13 +43,6 @@ router.post("/addBread", async (req, res) => {
 		res.json(err);
 	}
 });
-
-function getPreviousSunday(date = new Date()) {
-	const previousMonday = new Date();
-	previousMonday.setDate(date.getDate() - date.getDay());
-	previousMonday.setHours(0, 0, 0, 0);
-	return previousMonday;
-}
 
 router.post("/addOrder", async (req, res) => {
 	const date = new Date();
@@ -62,6 +62,47 @@ router.post("/addOrder", async (req, res) => {
 	} catch (err) {
 		res.send(err);
 	}
+});
+
+router.post("/calculateOrder", async (req, res) => {
+	const SPECIAL_ALLOWANCE = 5;
+	const BAD_SELL_DEDUCTION = 5;
+	const { prevOrder, saleStatus } = req.body;
+	let todayOrders = {};
+
+	Object.keys(prevOrder).forEach((bread) => {
+		if (saleStatus[bread] == null) {
+			todayOrders[bread] = prevOrder[bread];
+		} else if (saleStatus[bread]) {
+			todayOrders[bread] = prevOrder[bread] + SPECIAL_ALLOWANCE;
+		} else if (!saleStatus[bread]) {
+			todayOrders[bread] = prevOrder[bread] - BAD_SELL_DEDUCTION;
+		}
+	});
+
+	res.send(todayOrders);
+});
+
+router.post("/addTodayOrders", (req, res) => {
+	const date = new Date();
+	const day = DAYS[date.getDay()];
+	const weekOf = getPreviousSunday(date);
+
+	const todayOrders = req.body;
+
+	Object.keys(todayOrders).forEach(async (bread) => {
+		try {
+			const prevOrder = await Order.findOneAndUpdate(
+				{ $and: [{ bread: bread }, { weekOf: weekOf }] },
+				{ [day]: todayOrders[bread] },
+				{ upsert: true, new: true, setDefaultsOnInsert: true }
+			);
+		} catch (err) {
+			res.send(err);
+		}
+	});
+
+	res.status(200).json();
 });
 
 router.get("/getBreads", async (req, res) => {

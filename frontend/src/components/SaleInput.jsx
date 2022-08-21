@@ -37,7 +37,6 @@ function SaleInput(props) {
 				return prev;
 			});
 		}
-		console.log(saleStatus);
 	}, [isSpecial, isBad]);
 
 	const toggleSpecial = () => {

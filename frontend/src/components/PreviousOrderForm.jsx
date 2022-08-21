@@ -1,25 +1,5 @@
-import {
-	Accordion,
-	AccordionItem,
-	AccordionButton,
-	AccordionIcon,
-	AccordionPanel,
-	Box,
-	Flex,
-	Text,
-	NumberInput,
-	NumberInputField,
-	NumberInputStepper,
-	NumberIncrementStepper,
-	NumberDecrementStepper,
-	Slider,
-	SliderTrack,
-	SliderFilledTrack,
-	SliderThumb,
-	SliderMark,
-	Tooltip,
-	Heading,
-} from "@chakra-ui/react";
+import { Center, Flex, Heading } from "@chakra-ui/react";
+import { CheckIcon } from "@chakra-ui/icons";
 import { useContext } from "react";
 import CollapsibleHeaders from "./CollapsibleHeader";
 import { FormContext } from "./FormPage";
@@ -41,7 +21,32 @@ function PreviousOrderForm(props) {
 							/>
 						);
 				  })
-				: loaded && <Heading>Already ordered</Heading>}
+				: loaded && (
+						<Flex
+							alignSelf={"center"}
+							width={["90%"]}
+							height={["auto"]}
+							borderWidth={"2px"}
+							borderRadius={"xl"}
+							boxShadow={"md"}
+							direction={"column"}
+							padding={"1.5rem"}
+						>
+							<Center
+								alignSelf={"center"}
+								borderRadius={"full"}
+								borderColor={"green.300"}
+								borderWidth={"2px"}
+								width={["3.5rem"]}
+								height={["3.5rem"]}
+							>
+								<CheckIcon fontSize={"1.5rem"} color={"green.300"} />
+							</Center>
+							<Heading mt={"0.7rem"} color={"blackAlpha.700"} textAlign={"center"} fontSize={"lg"}>
+								Yesterday's Order Retrieved!
+							</Heading>
+						</Flex>
+				  )}
 		</>
 	);
 }
