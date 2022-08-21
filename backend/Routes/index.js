@@ -53,7 +53,6 @@ router.post("/login", async (req, res) => {
 
 router.post("/register", async (req, res) => {
 	// Destructure req.body properties into var
-	console.log(req.body);
 	const { username, password } = req.body;
 
 	try {

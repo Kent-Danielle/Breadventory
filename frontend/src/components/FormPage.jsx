@@ -9,45 +9,95 @@ import {
 	Skeleton,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { CheckIcon } from "@chakra-ui/icons";
 import PreviousOrderForm from "./PreviousOrderForm";
 import SaleStatusForm from "./SaleStatusForm";
 import EditOrderForm from "./EditOrderForm";
 
-function getStepContent(step) {
-	switch (step) {
-		case 0:
-			return <PreviousOrderForm />;
-		case 1:
-			return <SaleStatusForm />;
-		case 2:
-			return <EditOrderForm />;
-		default:
-			throw new Error("Unknown step");
-	}
-}
-
-export const OrderContext = createContext(null);
+export const FormContext = createContext(null);
 
 const steps = ["Previous Order", "Sale Status", "Edit Order"];
 
 function FormPage() {
 	const [loaded, setLoaded] = useState(false);
 	const [prevOrder, setPrevOrder] = useState({});
+	const [saleStatus, setSaleStatus] = useState({});
 	const [step, setStep] = useState(0);
+	let [isEmpty, setIsEmpty] = useState(false);
+	let [breads, setBreads] = useState([]);
+	let [orders, setOrders] = useState([]);
+
+	useEffect(() => {
+		let tempOrder = {};
+		async function fetchBread() {
+			const fetchBreadResponse = await fetch("/data/getBreads", {
+				method: "GET",
+			});
+
+			const fetchBreadResult = await fetchBreadResponse.json();
+
+			const fetchBreadOrder = await fetch("/data/getPrevOrders", {
+				method: "GET",
+			});
+
+			const { weekOrders, day } = await fetchBreadOrder.json();
+
+			setOrders(weekOrders);
+			setBreads(fetchBreadResult);
+
+			weekOrders.forEach((order) => {
+				if (order[day] === null) {
+					setIsEmpty(true);
+				}
+				tempOrder[order.bread] = order[day] === null ? 0 : order[day];
+			});
+
+			setPrevOrder((prev) => ({ ...prev, ...tempOrder }));
+			setLoaded(true);
+		}
+
+		fetchBread();
+	}, []);
+
+	function getStepContent(step) {
+		switch (step) {
+			case 0:
+				return <PreviousOrderForm isEmpty={isEmpty} />;
+			case 1:
+				return <SaleStatusForm />;
+			case 2:
+				return <EditOrderForm />;
+			default:
+				throw new Error("Unknown step");
+		}
+	}
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const response = await fetch("/data/addPrevOrders", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(prevOrder),
-		});
+		setLoaded(false);
 
+		switch (step) {
+			case 0:
+				const response = await fetch("/data/addPrevOrders", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(prevOrder),
+				});
+				break;
+			case 1:
+				console.log(saleStatus);
+				break;
+			case 2:
+				break;
+			default:
+				throw new Error("Unknown step");
+		}
+
+		setLoaded(true);
 		handleNext();
 	};
 
@@ -56,7 +106,6 @@ function FormPage() {
 	};
 
 	const handleBack = () => {
-		setLoaded(false)
 		setStep(step - 1);
 	};
 
@@ -140,8 +189,17 @@ function FormPage() {
 					</>
 				) : (
 					<>
-						<OrderContext.Provider
-							value={{ prevOrder, setPrevOrder, loaded, setLoaded }}
+						<FormContext.Provider
+							value={{
+								prevOrder,
+								setPrevOrder,
+								loaded,
+								setLoaded,
+								saleStatus,
+								setSaleStatus,
+								breads,
+								orders,
+							}}
 						>
 							<Flex
 								onSubmit={handleSubmit}
@@ -179,7 +237,7 @@ function FormPage() {
 									</Button>
 								</ButtonGroup>
 							</Flex>
-						</OrderContext.Provider>
+						</FormContext.Provider>
 					</>
 				)}
 			</>

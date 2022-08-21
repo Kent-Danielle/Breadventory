@@ -6,18 +6,12 @@ const breadSchema = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
-	yesterdayOrder: {
-		type: mongoose.Schema.Types.Mixed,
-		default: NaN,
-	},
-	todayOrder: {
-		type: mongoose.Schema.Types.Mixed,
-		default: NaN,
+	defaultOrder: {
+		type: Number,
 	},
 	category: {
 		type: String,
-	},
-	orderHistory: [mongoose.ObjectId],
+	}
 });
 
 module.exports = mongoose.model("bread", breadSchema);

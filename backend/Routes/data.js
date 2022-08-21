@@ -28,13 +28,11 @@ router.post("/addBread", async (req, res) => {
 		const bread = new Bread({
 			bread: req.body.bread,
 			category: req.body.category,
-			orderHistory: req.body.orderHistory,
 		});
 
 		await bread.save();
 		res.send("success");
 	} catch (err) {
-		console.log(err, "error");
 		res.json(err);
 	}
 });
@@ -58,11 +56,6 @@ router.post("/addOrder", async (req, res) => {
 			{ $and: [{ bread: bread }, { weekOf: weekOf }] },
 			{ [day]: order },
 			{ upsert: true, new: true, setDefaultsOnInsert: true }
-		);
-
-		await Bread.updateOne(
-			{ bread: bread },
-			{ $push: { orderHistory: newOrder._id } }
 		);
 
 		res.send(newOrder);
@@ -111,7 +104,6 @@ router.get("/getOrders", async (req, res) => {
 
 		breads.forEach(async (bread) => {
 			if (!orderSet.has(bread.bread)) {
-				console.log("Adding");
 				const newOrder = new Order({ bread: bread.bread, weekOf, weekOf });
 				await newOrder.save();
 			}
@@ -123,7 +115,6 @@ router.get("/getOrders", async (req, res) => {
 
 		res.send(weekOrders);
 	} catch (err) {
-		console.log(err);
 		res.send({ error: err, msg: "hi" });
 	}
 });
@@ -146,7 +137,6 @@ router.get("/getPrevOrders", async (req, res) => {
 
 		breads.forEach(async (bread) => {
 			if (!orderSet.has(bread.bread)) {
-				console.log("Adding");
 				const newOrder = new Order({ bread: bread.bread, weekOf, weekOf });
 				await newOrder.save();
 			}
@@ -156,11 +146,8 @@ router.get("/getPrevOrders", async (req, res) => {
 
 		weekOrders = await Order.find({ weekOf: weekOf });
 
-		console.log(day, weekOf);
-
 		res.send({ weekOrders: weekOrders, day: day });
 	} catch (err) {
-		console.log(err);
 		res.send({ error: err, msg: "hi" });
 	}
 });
@@ -180,13 +167,7 @@ router.post("/addPrevOrders", (req, res) => {
 				{ [day]: prevOrders[bread] },
 				{ upsert: true, new: true, setDefaultsOnInsert: true }
 			);
-
-			await Bread.updateOne(
-				{ bread: bread },
-				{ $push: { orderHistory: prevOrder._id } }
-			);
 		} catch (err) {
-			console.log(err);
 			res.send(err);
 		}
 	});

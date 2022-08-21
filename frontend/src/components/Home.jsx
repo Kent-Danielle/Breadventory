@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ReactSession } from "react-client-session";
 import { Button, Box } from "@chakra-ui/react";
-import CollapsibleTable from "./CollapsibleTable";
+import CollapsibleHeaders from "./CollapsibleHeader";
+
 
 function Home() {
 	const navigate = useNavigate();
@@ -59,7 +60,7 @@ function Home() {
 			</Button>
 			{breads.map((bread, index) => {
 				return (
-					<CollapsibleTable
+					<CollapsibleHeaders
 						key={index}
 						variant="home"
 						breadCategory={bread._id}

@@ -20,67 +20,28 @@ import {
 	Tooltip,
 	Heading,
 } from "@chakra-ui/react";
-import { useState, useEffect, useContext } from "react";
-import CollapsibleTable from "./CollapsibleTable";
-import { OrderContext } from "./FormPage";
+import { useContext } from "react";
+import CollapsibleHeaders from "./CollapsibleHeader";
+import { FormContext } from "./FormPage";
 
 function PreviousOrderForm(props) {
-	const { prevOrder, setPrevOrder, loaded, setLoaded } =
-		useContext(OrderContext);
-
-	let [breads, setBreads] = useState([]);
-	let [orders, setOrders] = useState([]);
-	let [isEmpty, setIsEmpty] = useState(false);
-
-	useEffect(() => {
-		let tempOrder = {};
-		async function fetchBread() {
-			const response1 = await fetch("/data/getBreads", {
-				method: "GET",
-			});
-
-			const result1 = await response1.json();
-
-			const response2 = await fetch("/data/getPrevOrders", {
-				method: "GET",
-			});
-
-			const { weekOrders, day } = await response2.json();
-
-			setBreads(result1);
-			setOrders(weekOrders);
-
-			weekOrders.forEach((order) => {
-				if (order[day] === null) {
-					setIsEmpty(true);
-				}
-				tempOrder[order.bread] = order[day] === null ? 0 : order[day];
-			});
-
-			setPrevOrder((prev) => ({ ...prev, ...tempOrder }));
-			setLoaded(true);
-		}
-
-		fetchBread();
-	}, []);
+	const { loaded, breads, orders } = useContext(FormContext);
 
 	return (
 		<>
-			{isEmpty ? (
-				breads.map((bread, index) => {
-					return (
-						<CollapsibleTable
-							key={index}
-							variant="form"
-							breadCategory={bread._id}
-							breads={bread.records}
-							orders={orders}
-						/>
-					);
-				})
-			) : (
-				<Heading>Already ordered</Heading>
-			)}
+			{props.isEmpty
+				? breads.map((bread, index) => {
+						return (
+							<CollapsibleHeaders
+								key={index}
+								variant="form"
+								breadCategory={bread._id}
+								breads={bread.records}
+								orders={orders}
+							/>
+						);
+				  })
+				: loaded && <Heading>Already ordered</Heading>}
 		</>
 	);
 }

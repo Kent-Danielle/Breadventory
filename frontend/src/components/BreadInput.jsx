@@ -13,10 +13,10 @@ import {
 	SliderThumb,
 	Tooltip,
 } from "@chakra-ui/react";
-import { OrderContext } from "./FormPage";
+import { FormContext } from "./FormPage";
 
 function BreadInput(props) {
-	const { prevOrder, setPrevOrder } = useContext(OrderContext);
+	const { prevOrder, setPrevOrder } = useContext(FormContext);
 	const [value, setValue] = useState(prevOrder[props.bread]);
 	const [showTooltip, setShowTooltip] = useState(false);
 
