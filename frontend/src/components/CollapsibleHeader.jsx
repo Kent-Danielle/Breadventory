@@ -96,7 +96,7 @@ function CollapsibleHeaders(props) {
 
 	return (
 		<SlideFade in={true} offsetY={30}>
-			<Accordion allowMultiple mb={"1em"}>
+			<Accordion defaultIndex={[(props.variant == "home" && 0)]} allowMultiple mb={"1em"}>
 				<AccordionItem border={"none"} borderRadius={"lg"}>
 					<h2>
 						<AccordionButton

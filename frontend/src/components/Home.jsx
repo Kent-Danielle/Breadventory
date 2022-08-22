@@ -1,9 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ReactSession } from "react-client-session";
-import { Button, Box } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
+import {
+	Button,
+	Box,
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	MenuItemOption,
+	MenuGroup,
+	MenuOptionGroup,
+	MenuDivider,
+	ButtonGroup,
+} from "@chakra-ui/react";
 import CollapsibleHeaders from "./CollapsibleHeader";
-
 
 function Home() {
 	const navigate = useNavigate();
@@ -40,36 +52,85 @@ function Home() {
 		fetchBread();
 	}, []);
 
+	const handleLogout = async () => {
+		try {
+			const logoutResponse = await fetch("/logout", {
+				method: "POST",
+			});
+		} catch (err) {
+			console.log(err);
+		}
+
+		ReactSession.remove("loggedIn");
+		navigate("/login");
+	};
+
 	return (
-		<Box>
-			<Button
-				opacity={0.85}
-				alignSelf={"flex-start"}
-				mb={"2em"}
-				borderRadius={"full"}
-				px={"1.5em"}
-				py={"1em"}
-				bgColor={"carbon.400"}
-				color="white"
-				boxShadow={"xl"}
-				onClick={() => {
-					navigate("/formpage");
-				}}
-			>
-				Order Bread
-			</Button>
-			{breads.map((bread, index) => {
-				return (
-					<CollapsibleHeaders
-						key={index}
-						variant="home"
-						breadCategory={bread._id}
-						breads={bread.records}
-						orders={orders}
-					/>
-				);
-			})}
-		</Box>
+		<>
+			<Menu>
+				<MenuButton
+					p={["0.8rem"]}
+					alignSelf={"flex-end"}
+					width={"fit-content"}
+					as={Button}
+				>
+					<HamburgerIcon />
+				</MenuButton>
+				<MenuList>
+					<MenuItem onClick={handleLogout} color={"red.500"}>
+						Logout
+					</MenuItem>
+				</MenuList>
+			</Menu>
+			<>
+				<ButtonGroup mt={"3rem"}>
+					<Button
+						opacity={0.85}
+						alignSelf={"flex-start"}
+						mb={"2em"}
+						borderRadius={"full"}
+						px={"1.5em"}
+						py={"1em"}
+						bgColor={"carbon.400"}
+						color="white"
+						boxShadow={"xl"}
+						onClick={() => {
+							navigate("/formpage");
+						}}
+					>
+						Order Bread
+					</Button>
+					<Button
+						opacity={0.85}
+						alignSelf={"flex-start"}
+						mb={"2em"}
+						borderRadius={"full"}
+						px={"1.5em"}
+						py={"1em"}
+						bgColor={"carbon.400"}
+						color="white"
+						boxShadow={"xl"}
+						onClick={() => {
+							navigate("/");
+						}}
+					>
+						Add Bread
+					</Button>
+				</ButtonGroup>
+
+				{breads.map((bread, index) => {
+					return (
+						<CollapsibleHeaders
+							key={index}
+							variant="home"
+							breadCategory={bread._id}
+							breads={bread.records}
+							orders={orders}
+						/>
+					);
+				})}
+			</>
+		</>
 	);
 }
 

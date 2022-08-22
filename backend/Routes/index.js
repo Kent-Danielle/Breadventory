@@ -10,16 +10,15 @@ const router = express.Router();
 const User = require("../Models/user");
 const user = require("../Models/user");
 
-
 router.post("/logout", (req, res) => {
 	if (req.session.loggedIn) {
 		//destroy the current session when logged out
 		req.session.destroy(function (error) {
 			if (error) {
-				res.send("Unable to log out");
+				res.json(500).send(error);
 			} else {
 				// session deleted, redirect to home
-				res.redirect("/");
+				res.json(200).send();
 			}
 		});
 	}
@@ -41,13 +40,13 @@ router.post("/login", async (req, res) => {
 		if (isCorrectPassword) {
 			req.session.loggedIn = true;
 			req.session.username = username;
-			
-			res.json({loggedIn: true});
+
+			res.json({ loggedIn: true });
 		} else {
 			throw "Authentication Failed";
 		}
 	} catch (e) {
-		res.json({loggedIn: false, error: e});
+		res.json({ loggedIn: false, error: e });
 	}
 });
 
