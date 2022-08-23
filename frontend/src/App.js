@@ -7,6 +7,7 @@ import { ChakraProvider, Flex } from "@chakra-ui/react";
 import Redirect from "./components/Redirect";
 import { theme } from "./themes/index";
 import FormPage from "./components/FormPage";
+import AddBreadForm from "./components/AddBreadForm";
 
 function App() {
 	ReactSession.setStoreType("localStorage");
@@ -26,6 +27,7 @@ function App() {
 						<Route path="/login" element={<Login />} />
 						<Route path="/home" element={<Home />} />
 						<Route path="/formpage" element={<FormPage />} />
+						<Route path="/addbread" element={<AddBreadForm />} />
 					</Routes>
 				</Flex>
 			</Flex>

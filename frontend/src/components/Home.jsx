@@ -88,11 +88,8 @@ function Home() {
 						opacity={0.85}
 						alignSelf={"flex-start"}
 						mb={"2em"}
-						borderRadius={"full"}
 						px={"1.5em"}
 						py={"1em"}
-						bgColor={"carbon.400"}
-						color="white"
 						boxShadow={"xl"}
 						onClick={() => {
 							navigate("/formpage");
@@ -104,14 +101,11 @@ function Home() {
 						opacity={0.85}
 						alignSelf={"flex-start"}
 						mb={"2em"}
-						borderRadius={"full"}
 						px={"1.5em"}
 						py={"1em"}
-						bgColor={"carbon.400"}
-						color="white"
 						boxShadow={"xl"}
 						onClick={() => {
-							navigate("/");
+							navigate("/addbread");
 						}}
 					>
 						Add Bread
