@@ -141,7 +141,7 @@ function FormPage() {
 				mb={"2em"}
 				px={"1.5em"}
 				py={"1em"}
-				boxShadow={"xl"}
+				boxShadow={"md"}
 				onClick={() => {
 					navigate("/home");
 				}}

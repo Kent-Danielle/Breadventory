@@ -11,17 +11,59 @@ import {
 	Heading,
 	InputGroup,
 	FormErrorMessage,
+	Select,
+	Text,
+	NumberInput,
+	NumberInputField,
+	NumberInputStepper,
+	NumberIncrementStepper,
+	NumberDecrementStepper,
+	Slider,
+	SliderTrack,
+	SliderFilledTrack,
+	SliderThumb,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { Field, Formik, useFormik } from "formik";
-import { ReactSession } from "react-client-session";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import * as Yup from "yup";
 
 function AddBreadForm() {
-	const [error, setError] = useState("");
-	const [show, setShow] = useState(false);
-	const togglePassword = () => setShow(!show);
+	const [formValue, setFormValue] = useState({
+		breadName: "",
+		category: "",
+		specialAllowance: 0,
+		badSellDeduction: 0,
+	});
+
+	function handleChange(event) {
+		const id = event.target.id;
+		const value = event.target.value;
+		setFormValue((prev) => ({
+			...prev,
+			[id]: value,
+		}));
+	}
+
+	function handleNumberInput(id, value) {
+		setFormValue((prev) => ({
+			...prev,
+			[id]: value,
+		}));
+	}
+
+	async function handleSubmit(e) {
+		e.preventDefault();
+		const response = await fetch("/data/addBread", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(formValue),
+		});
+
+		if (response.status == 200) {
+			navigate("/home");
+		}
+	}
 
 	const navigate = useNavigate();
 	return (
@@ -32,83 +74,138 @@ function AddBreadForm() {
 				mb={"2em"}
 				px={"1.5em"}
 				py={"1em"}
-				boxShadow={"xl"}
+				boxShadow={"md"}
 				onClick={() => {
 					navigate("/home");
 				}}
 			>
 				Return
 			</Button>
-			<Formik
-				initialValues={{ bread: "", category: "", specialAllowance: 0, badSellDeduction: 0 }}
-				validationSchema={Yup.object({
-					username: Yup.string()
-						.required("Bread name required")
-						.min(3, "Bread name is too short"),
-					password: Yup.number().required("Password is too short"),
-				})}
-				onSubmit={async (values) => {
-					const { username, password } = values;
-					const response = await fetch("/login", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify({
-							username,
-							password,
-						}),
-					});
-
-					const data = await response.json();
-
-					if (data.loggedIn) {
-						ReactSession.set("loggedIn", true);
-						navigate("/home");
-					} else {
-						setError(data.error);
-					}
-				}}
+			<Flex
+				as="form"
+				onSubmit={handleSubmit}
+				direction={"column"}
+				h="100vh"
+				justifyContent={"flex-start"}
 			>
-				{(formik) => (
-					<Flex
-						direction={"column"}
-						as="form"
-						h="100vh"
-						justifyContent={"flex-start"}
-						onSubmit={formik.handleSubmit}
+				<Heading color={"carbon.300"} alignSelf={"start"} my={"2rem"}>
+					Add new bread here!
+				</Heading>
+
+				<FormControl>
+					<FormLabel>Bread name</FormLabel>
+					<Input
+						id="breadName"
+						value={formValue.breadName}
+						onChange={handleChange}
+					/>
+				</FormControl>
+
+				<FormControl mt={"1.5rem"}>
+					<FormLabel>Bread category</FormLabel>
+					<Select
+						id="category"
+						value={formValue.category}
+						onChange={handleChange}
+						placeholder="Select category..."
 					>
-						<Heading alignSelf={"start"} mb={"2rem"}>
-							Add new bread here!
-						</Heading>
-						<FormControl
-							isInvalid={formik.errors.username && formik.touched.username}
+						<option value="Not Cooled">Not Cooled</option>
+						<option value="Cooled">Cooled</option>
+						<option value="Loaves">Loaves</option>
+						<option value="Cookies">Cookies</option>
+						<option value="Assorted">Assorted</option>
+					</Select>
+				</FormControl>
+
+				<FormControl mt={"1.5rem"}>
+					<FormLabel mb={0}>Special allowance</FormLabel>
+					<Text fontSize={["sm"]} color={"gray.500"}>
+						Set the number of breads to be added to the order when it's on sale
+					</Text>
+					<Flex
+						mt={"1rem"}
+						alignItems={"center"}
+						justifyContent={"space-between"}
+					>
+						<NumberInput
+							w={["25%", "15%"]}
+							size={["md", "lg"]}
+							min={0}
+							max={20}
+							onChange={(val) => handleNumberInput("specialAllowance", val)}
+							defaultValue={0}
+							value={formValue.specialAllowance}
 						>
-							<FormLabel>Bread name</FormLabel>
-							<Field
-								as={Input}
-								name="username"
-								placeholder="Enter username..."
-								{...formik.getFieldProps("username")}
-							/>
-							<FormErrorMessage>{formik.errors.username}</FormErrorMessage>
-						</FormControl>
-						<Button alignSelf={"end"} my={"2rem"} type="submit">
-							Add bread
-						</Button>
-						<Alert
-							borderRadius={"lg"}
-							visibility={error === "" ? "hidden" : "visible"}
-							w={["100%", "80%"]}
-							alignSelf={"center"}
-							status="error"
+							<NumberInputField />
+							<NumberInputStepper>
+								<NumberIncrementStepper />
+								<NumberDecrementStepper />
+							</NumberInputStepper>
+						</NumberInput>
+						<Slider
+							w={["70%", "80%"]}
+							min={0}
+							max={100}
+							onChange={(val) => handleNumberInput("specialAllowance", val)}
+							defaultValue={0}
+							value={formValue.specialAllowance}
 						>
-							<AlertIcon />
-							<AlertTitle>{error}</AlertTitle>
-						</Alert>
+							<SliderTrack>
+								<SliderFilledTrack />
+							</SliderTrack>
+
+							<SliderThumb />
+						</Slider>
 					</Flex>
-				)}
-			</Formik>
+				</FormControl>
+
+				<FormControl mt={"1.5rem"}>
+					<FormLabel mb={0}>Bad Sale Deduction</FormLabel>
+					<Text fontSize={["sm"]} color={"gray.500"}>
+						Set the number of breads to be deducted from the order when it's
+						selling slow
+					</Text>
+					<Flex
+						mt={"1rem"}
+						alignItems={"center"}
+						justifyContent={"space-between"}
+					>
+						<NumberInput
+							w={["25%", "15%"]}
+							size={["md", "lg"]}
+							min={0}
+							max={20}
+							onChange={(val) => handleNumberInput("badSellDeduction", val)}
+							defaultValue={0}
+							value={formValue.badSellDeduction}
+						>
+							<NumberInputField />
+							<NumberInputStepper>
+								<NumberIncrementStepper />
+								<NumberDecrementStepper />
+							</NumberInputStepper>
+						</NumberInput>
+						<Slider
+							w={["70%", "80%"]}
+							min={0}
+							max={100}
+							onChange={(val) => handleNumberInput("badSellDeduction", val)}
+							defaultValue={0}
+							value={formValue.badSellDeduction}
+						>
+							<SliderTrack>
+								<SliderFilledTrack />
+							</SliderTrack>
+							=
+							<SliderThumb />
+						</Slider>
+					</Flex>
+				</FormControl>
+
+				<Button alignSelf={"end"} my={"2rem"} type="submit">
+					Add bread
+				</Button>
+			</Flex>
 		</>
 	);
 }

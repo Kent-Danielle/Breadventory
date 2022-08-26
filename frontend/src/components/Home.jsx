@@ -77,6 +77,13 @@ function Home() {
 					<HamburgerIcon />
 				</MenuButton>
 				<MenuList>
+					<MenuItem
+						onClick={() => {
+							navigate("/addbread");
+						}}
+					>
+						Add bread
+					</MenuItem>
 					<MenuItem onClick={handleLogout} color={"red.500"}>
 						Logout
 					</MenuItem>
@@ -90,25 +97,12 @@ function Home() {
 						mb={"2em"}
 						px={"1.5em"}
 						py={"1em"}
-						boxShadow={"xl"}
+						boxShadow={"md"}
 						onClick={() => {
 							navigate("/formpage");
 						}}
 					>
 						Order Bread
-					</Button>
-					<Button
-						opacity={0.85}
-						alignSelf={"flex-start"}
-						mb={"2em"}
-						px={"1.5em"}
-						py={"1em"}
-						boxShadow={"xl"}
-						onClick={() => {
-							navigate("/addbread");
-						}}
-					>
-						Add Bread
 					</Button>
 				</ButtonGroup>
 
