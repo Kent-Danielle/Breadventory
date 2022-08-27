@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ReactSession } from "react-client-session";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
 	Button,
@@ -16,6 +15,7 @@ import {
 	ButtonGroup,
 } from "@chakra-ui/react";
 import CollapsibleHeaders from "./CollapsibleHeader";
+import {setLogInStatus, checkLogInStatus} from "./Redirect"
 
 function Home() {
 	const navigate = useNavigate();
@@ -24,13 +24,9 @@ function Home() {
 
 	// Redirect user if they're logged in or not
 	useEffect(() => {
-		const isLoggedIn = ReactSession.get("loggedIn");
+		const isLoggedIn = checkLogInStatus();
 
-		if (isLoggedIn) {
-			navigate("/home");
-		} else {
-			navigate("/login");
-		}
+		isLoggedIn ? navigate("/home") : navigate("/login");
 
 		async function fetchBread() {
 			const response1 = await fetch("/data/getBreads", {
@@ -61,7 +57,8 @@ function Home() {
 			console.log(err);
 		}
 
-		ReactSession.remove("loggedIn");
+		//remove local storage
+		setLogInStatus(false)
 		navigate("/login");
 	};
 

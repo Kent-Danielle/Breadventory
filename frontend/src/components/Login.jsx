@@ -12,17 +12,23 @@ import {
 	InputGroup,
 	FormErrorMessage,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Field, Formik, useFormik } from "formik";
-import { ReactSession } from "react-client-session";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { setLogInStatus, checkLogInStatus } from "./Redirect";
 
 function Login() {
 	const navigate = useNavigate();
 	const [error, setError] = useState("");
 	const [show, setShow] = useState(false);
 	const togglePassword = () => setShow(!show);
+
+	useEffect(() => {
+		const isLoggedIn = checkLogInStatus();
+
+		isLoggedIn ? navigate("/home") : navigate("/login");
+	}, []);
 
 	return (
 		<Formik
@@ -49,7 +55,7 @@ function Login() {
 				const data = await response.json();
 
 				if (data.loggedIn) {
-					ReactSession.set("loggedIn", true);
+					setLogInStatus(true);
 					navigate("/home");
 				} else {
 					setError(data.error);

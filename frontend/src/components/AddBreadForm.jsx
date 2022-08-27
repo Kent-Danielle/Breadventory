@@ -34,6 +34,13 @@ function AddBreadForm() {
 		badSellDeduction: 0,
 	});
 
+	useEffect(() => {
+		const isLoggedIn = checkLogInStatus();
+
+		isLoggedIn ? navigate("/home") : navigate("/login");
+	}, []);
+
+
 	function handleChange(event) {
 		const id = event.target.id;
 		const value = event.target.value;

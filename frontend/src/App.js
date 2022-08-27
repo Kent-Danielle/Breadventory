@@ -2,7 +2,6 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import Home from "./components/Home";
-import { ReactSession } from "react-client-session";
 import { ChakraProvider, Flex } from "@chakra-ui/react";
 import Redirect from "./components/Redirect";
 import { theme } from "./themes/index";
@@ -10,7 +9,6 @@ import FormPage from "./components/FormPage";
 import AddBreadForm from "./components/AddBreadForm";
 
 function App() {
-	ReactSession.setStoreType("localStorage");
 
 	return (
 		<ChakraProvider resetCSS theme={theme}>

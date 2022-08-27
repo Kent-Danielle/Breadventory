@@ -30,6 +30,13 @@ function FormPage() {
 	const [orders, setOrders] = useState([]);
 
 	useEffect(() => {
+		const isLoggedIn = checkLogInStatus();
+
+		isLoggedIn ? navigate("/home") : navigate("/login");
+	}, []);
+
+
+	useEffect(() => {
 		let tempOrder = {};
 		async function fetchBread() {
 			const fetchBreadResponse = await fetch("/data/getBreads", {
