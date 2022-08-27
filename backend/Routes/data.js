@@ -13,6 +13,16 @@ function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function titleCase(str) {
+	return str
+		.toLowerCase()
+		.split(" ")
+		.map(function (word) {
+			return word.charAt(0).toUpperCase() + word.slice(1);
+		})
+		.join(" ");
+}
+
 const DAYS = [
 	"sunday",
 	"monday",
@@ -53,17 +63,21 @@ router.post("/addBreads", async (req, res) => {
 
 router.post("/addBread", async (req, res) => {
 	const newBread = req.body;
-	console.log(newBread);
+	newBread.breadName = titleCase(newBread.breadName);
 
 	try {
-		const bread = new Bread({
-			bread: newBread.breadName,
-			category: newBread.category,
-			specialAllowance: parseInt(newBread.specialAllowance),
-			badSellDeduction: parseInt(newBread.badSellDeduction),
-		});
+		const bread = await Bread.findOneAndUpdate(
+			{ bread: newBread.breadName },
+			{
+				bread: newBread.breadName,
+				category: newBread.category,
+				specialAllowance: parseInt(newBread.specialAllowance),
+				badSellDeduction: parseInt(newBread.badSellDeduction),
+			},
+			{ upsert: true, new: true, setDefaultsOnInsert: false }
+		);
 
-		await bread.save();
+		console.log(bread);
 
 		res.status(200).send("success");
 	} catch (err) {
