@@ -4,16 +4,18 @@ import {
 	ModalContent,
 	ModalHeader,
 	ModalFooter,
-	ModalBody,
-	ModalCloseButton,
+	Alert,
+	AlertIcon,
+	AlertTitle,
 	Button,
 	Text,
 } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ModalContext } from "./Home";
 
 function DeleteModal(props) {
-  const { isDeleteModalOpen, toggleDeleteModal } = useContext(ModalContext);
+	const { isDeleteModalOpen, toggleDeleteModal } = useContext(ModalContext);
+	const [error, setError] = useState(false);
 
 	async function deleteBread() {
 		const response = await fetch("/data/deleteBread", {
@@ -26,16 +28,15 @@ function DeleteModal(props) {
 			}),
 		});
 
-    const result = await response.json()
-
-    if (response.ok) {
-      toggleDeleteModal()
-    } else {
-      console.log(result)
-    }
+		if (response.ok) {
+			toggleDeleteModal();
+		} else {
+			setError(true);
+		}
 	}
 
-	
+	console.log(error);
+
 	return (
 		<>
 			<Modal
@@ -46,19 +47,35 @@ function DeleteModal(props) {
 			>
 				<ModalOverlay />
 				<ModalContent>
-					<ModalHeader pb={0} px={"1rem"} fontSize={["md", "xl"]}>
-						Do you want to delete "
-						<Text color="red.400" width={"fit-content"} display={"inline"}>
-							{props.bread}
-						</Text>
-						" ?
+					<ModalHeader
+						textAlign={"center"}
+						pb={0}
+						px={"1rem"}
+						fontSize={["md", "lg"]}
+					>
+						{error ? (
+							<Alert
+								borderRadius={"lg"}
+								w={["100%"]}
+								alignSelf={"center"}
+								status="error"
+							>
+								<AlertIcon />
+								<AlertTitle>Error occured: bread can't be deleted.</AlertTitle>
+							</Alert>
+						) : (
+							<>
+								Do you want to delete "
+								<Text color="red.400" width={"fit-content"} display={"inline"}>
+									{props.bread}
+								</Text>
+								" ?
+							</>
+						)}
 					</ModalHeader>
+
 					<ModalFooter pt={"1rem"} justifyContent={"center"}>
-						<Button
-							onClick={deleteBread}
-							colorScheme="orange"
-							mr={3}
-						>
+						<Button onClick={deleteBread} colorScheme="orange" mr={3} isDisabled={error}>
 							Delete
 						</Button>
 						<Button onClick={toggleDeleteModal} variant="ghost">
