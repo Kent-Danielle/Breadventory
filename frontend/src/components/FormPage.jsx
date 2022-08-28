@@ -9,6 +9,7 @@ import {
 	Skeleton,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import {checkLogInStatus} from "./Redirect"
 import { createContext, useState, useEffect } from "react";
 import { CheckIcon } from "@chakra-ui/icons";
 import PreviousOrderForm from "./PreviousOrderForm";

@@ -25,6 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { checkLogInStatus } from "./Redirect";
 
 function AddBreadForm() {
 	const [formValue, setFormValue] = useState({
@@ -39,7 +40,6 @@ function AddBreadForm() {
 
 		isLoggedIn ? navigate("/home") : navigate("/login");
 	}, []);
-
 
 	function handleChange(event) {
 		const id = event.target.id;

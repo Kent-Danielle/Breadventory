@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext } from "react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
 	Button,
@@ -15,12 +15,22 @@ import {
 	ButtonGroup,
 } from "@chakra-ui/react";
 import CollapsibleHeaders from "./CollapsibleHeader";
-import {setLogInStatus, checkLogInStatus} from "./Redirect"
+import { setLogInStatus, checkLogInStatus } from "./Redirect";
+import DeleteModal from "./DeleteModal";
+
+export const ModalContext = createContext(null);
 
 function Home() {
 	const navigate = useNavigate();
-	let [breads, setBreads] = useState([]);
-	let [orders, setOrders] = useState([]);
+	const [breads, setBreads] = useState([]);
+	const [orders, setOrders] = useState([]);
+	const [breadClicked, setBreadClicked] = useState("");
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+	function toggleDeleteModal(breadName) {
+		breadName && setBreadClicked(breadName);
+		setIsDeleteModalOpen(!isDeleteModalOpen);
+	}
 
 	// Redirect user if they're logged in or not
 	useEffect(() => {
@@ -58,63 +68,67 @@ function Home() {
 		}
 
 		//remove local storage
-		setLogInStatus(false)
+		setLogInStatus(false);
 		navigate("/login");
 	};
 
 	return (
 		<>
-			<Menu>
-				<MenuButton
-					p={["0.8rem"]}
-					alignSelf={"flex-end"}
-					width={"fit-content"}
-					as={Button}
-				>
-					<HamburgerIcon />
-				</MenuButton>
-				<MenuList>
-					<MenuItem
-						onClick={() => {
-							navigate("/addbread");
-						}}
+			<ModalContext.Provider value={{ isDeleteModalOpen, toggleDeleteModal }}>
+				<Menu>
+					<MenuButton
+						p={["0.8rem"]}
+						alignSelf={"flex-end"}
+						width={"fit-content"}
+						as={Button}
 					>
-						Add bread
-					</MenuItem>
-					<MenuItem onClick={handleLogout} color={"red.500"}>
-						Logout
-					</MenuItem>
-				</MenuList>
-			</Menu>
-			<>
-				<ButtonGroup mt={"3rem"}>
-					<Button
-						opacity={0.85}
-						alignSelf={"flex-start"}
-						mb={"2em"}
-						px={"1.5em"}
-						py={"1em"}
-						boxShadow={"md"}
-						onClick={() => {
-							navigate("/formpage");
-						}}
-					>
-						Order Bread
-					</Button>
-				</ButtonGroup>
+						<HamburgerIcon />
+					</MenuButton>
+					<MenuList>
+						<MenuItem
+							onClick={() => {
+								navigate("/addbread");
+							}}
+						>
+							Add bread
+						</MenuItem>
+						<MenuItem onClick={handleLogout} color={"red.500"}>
+							Logout
+						</MenuItem>
+					</MenuList>
+				</Menu>
 
-				{breads.map((bread, index) => {
-					return (
-						<CollapsibleHeaders
-							key={index}
-							variant="home"
-							breadCategory={bread._id}
-							breads={bread.records}
-							orders={orders}
-						/>
-					);
-				})}
-			</>
+				<>
+					<ButtonGroup mt={"3rem"}>
+						<Button
+							opacity={0.85}
+							alignSelf={"flex-start"}
+							mb={"2em"}
+							px={"1.5em"}
+							py={"1em"}
+							boxShadow={"md"}
+							onClick={() => {
+								navigate("/formpage");
+							}}
+						>
+							Order Bread
+						</Button>
+					</ButtonGroup>
+
+					{breads.map((bread, index) => {
+						return (
+							<CollapsibleHeaders
+								key={index}
+								variant="home"
+								breadCategory={bread._id}
+								breads={bread.records}
+								orders={orders}
+							/>
+						);
+					})}
+				</>
+				<DeleteModal bread={breadClicked} />
+			</ModalContext.Provider>
 		</>
 	);
 }

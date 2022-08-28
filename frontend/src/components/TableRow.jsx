@@ -1,14 +1,24 @@
 import { Tr, Td, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import { ModalContext } from "./Home";
+import { useContext } from "react";
 
 function TableRow(props) {
+	const { toggleDeleteModal } = useContext(ModalContext);
 	return (
 		<Tr>
 			<Td>
 				<Menu>
-					<MenuButton>{props.breadName}</MenuButton>
+					<MenuButton textDecor={"underline"}>{props.breadName}</MenuButton>
 					<MenuList>
 						<MenuItem>Edit Bread</MenuItem>
-						<MenuItem color={"red.500"}>Delete Bread</MenuItem>
+						<MenuItem
+							onClick={() => {
+								toggleDeleteModal(props.breadName);
+							}}
+							color={"red.500"}
+						>
+							Delete Bread
+						</MenuItem>
 					</MenuList>
 				</Menu>
 			</Td>

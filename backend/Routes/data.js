@@ -40,6 +40,20 @@ function getPreviousSunday(date = new Date()) {
 	return previousMonday;
 }
 
+router.post("/deleteBread", async (req, res) => {
+	const { breadName } = req.body
+
+	try {
+		await Bread.deleteOne({bread: breadName})
+
+		res.status(200).send("success")
+	} catch(err) {
+		console.log(err);
+		res.status(500).send("Error occured! Cannot add new bread at the moment.");
+	}
+
+})
+
 router.post("/addBreads", async (req, res) => {
 	const newBreads = req.body;
 
@@ -76,8 +90,6 @@ router.post("/addBread", async (req, res) => {
 			},
 			{ upsert: true, new: true, setDefaultsOnInsert: false }
 		);
-
-		console.log(bread);
 
 		res.status(200).send("success");
 	} catch (err) {
