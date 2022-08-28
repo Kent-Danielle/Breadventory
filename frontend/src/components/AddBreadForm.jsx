@@ -99,7 +99,7 @@ function AddBreadForm() {
 					Add new bread here!
 				</Heading>
 
-				<FormControl>
+				<FormControl isRequired>
 					<FormLabel>Bread name</FormLabel>
 					<Input
 						id="breadName"
@@ -108,7 +108,7 @@ function AddBreadForm() {
 					/>
 				</FormControl>
 
-				<FormControl mt={"1.5rem"}>
+				<FormControl isRequired mt={"1.5rem"}>
 					<FormLabel>Bread category</FormLabel>
 					<Select
 						id="category"

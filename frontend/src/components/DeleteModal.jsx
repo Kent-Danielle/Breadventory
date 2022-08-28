@@ -35,8 +35,6 @@ function DeleteModal(props) {
 		}
 	}
 
-	console.log(error);
-
 	return (
 		<>
 			<Modal
