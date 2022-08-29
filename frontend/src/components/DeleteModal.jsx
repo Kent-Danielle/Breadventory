@@ -19,7 +19,7 @@ function DeleteModal(props) {
 	const [error, setError] = useState(false);
 
 	async function deleteBread() {
-		const response = await fetch("/data/deleteBread", {
+		const response = await fetch("https://breadventory.herokuapp.com/data/deleteBread", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

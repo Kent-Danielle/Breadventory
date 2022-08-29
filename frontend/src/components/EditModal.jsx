@@ -62,7 +62,7 @@ function EditModal(props) {
 
 	async function handleSubmit(e) {
 		e.preventDefault();
-		const response = await fetch("/data/editBread", {
+		const response = await fetch("https://breadventory.herokuapp.com/data/editBread", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

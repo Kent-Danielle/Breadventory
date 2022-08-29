@@ -220,7 +220,9 @@ router.get("/getBreads", async (req, res) => {
 			return sortOrder.indexOf(a._id) - sortOrder.indexOf(b._id);
 		});
 
-		res.send(result);
+		console.log(result)
+
+		res.status(200).send(result);
 	} catch (err) {
 		res.send(err);
 	}

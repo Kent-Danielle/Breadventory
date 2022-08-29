@@ -41,7 +41,7 @@ function Login() {
 			})}
 			onSubmit={async (values) => {
 				const { username, password } = values;
-				const response = await fetch("/login", {
+				const response = await fetch("https://breadventory.herokuapp.com/login", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
