@@ -41,18 +41,17 @@ function getPreviousSunday(date = new Date()) {
 }
 
 router.post("/deleteBread", async (req, res) => {
-	const { breadName } = req.body
+	const { breadName } = req.body;
 
 	try {
-		await Bread.deleteOne({bread: breadName})
+		await Bread.deleteOne({ bread: breadName });
 
-		res.status(200).send("success")
-	} catch(err) {
+		res.status(200).send("success");
+	} catch (err) {
 		console.log(err);
 		res.status(500).send("Error occured! Cannot add new bread at the moment.");
 	}
-
-})
+});
 
 router.post("/addBreads", async (req, res) => {
 	const newBreads = req.body;
@@ -87,6 +86,40 @@ router.post("/addBread", async (req, res) => {
 				category: newBread.category,
 				specialAllowance: parseInt(newBread.specialAllowance),
 				badSellDeduction: parseInt(newBread.badSellDeduction),
+			},
+			{ upsert: true, new: true, setDefaultsOnInsert: false }
+		);
+
+		res.status(200).send("success");
+	} catch (err) {
+		console.log(err);
+		res.status(500).send("Error occured! Cannot add new bread at the moment.");
+	}
+});
+
+router.post("/editBread", async (req, res) => {
+	const data = req.body;
+	console.log(data);
+	try {
+		const bread = await Bread.findOneAndUpdate(
+			{ bread: data.oldBread },
+			{
+				bread:
+					data.breadName == null || data.breadName == ""
+						? data.oldBreadName
+						: data.breadName,
+				category:
+					data.category == null || data.breadName == ""
+						? data.oldCategory
+						: data.category,
+				specialAllowance:
+					data.specialAllowance == null
+						? parseInt(data.oldSpecialAllowance)
+						: parseInt(data.specialAllowance),
+				badSellDeduction:
+					data.badSellDeduction == null
+						? parseInt(data.oldBadSellDeduction)
+						: parseInt(data.badSellDeduction),
 			},
 			{ upsert: true, new: true, setDefaultsOnInsert: false }
 		);

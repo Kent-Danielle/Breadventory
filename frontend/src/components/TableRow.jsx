@@ -3,17 +3,23 @@ import { ModalContext } from "./Home";
 import { useContext } from "react";
 
 function TableRow(props) {
-	const { toggleDeleteModal } = useContext(ModalContext);
+	const { toggleDeleteModal, toggleEditModal } = useContext(ModalContext);
 	return (
 		<Tr>
 			<Td>
 				<Menu>
 					<MenuButton textDecor={"underline"}>{props.breadName}</MenuButton>
 					<MenuList>
-						<MenuItem>Edit Bread</MenuItem>
 						<MenuItem
 							onClick={() => {
-								toggleDeleteModal(props.breadName);
+								toggleEditModal(props.data);
+							}}
+						>
+							Edit Bread
+						</MenuItem>
+						<MenuItem
+							onClick={() => {
+								toggleDeleteModal(props.data);
 							}}
 							color={"red.500"}
 						>

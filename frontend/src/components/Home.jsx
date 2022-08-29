@@ -17,6 +17,7 @@ import {
 import CollapsibleHeaders from "./CollapsibleHeader";
 import { setLogInStatus, checkLogInStatus } from "./Redirect";
 import DeleteModal from "./DeleteModal";
+import EditModal from "./EditModal";
 
 export const ModalContext = createContext(null);
 
@@ -24,13 +25,23 @@ function Home() {
 	const navigate = useNavigate();
 	const [breads, setBreads] = useState([]);
 	const [orders, setOrders] = useState([]);
-	const [breadClicked, setBreadClicked] = useState("");
+	const [breadClicked, setBreadClicked] = useState({});
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-	function toggleDeleteModal(breadName) {
-		breadName && setBreadClicked(breadName);
+	function toggleDeleteModal(breadData) {
+		breadData && setBreadClicked(breadData);
 		setIsDeleteModalOpen(!isDeleteModalOpen);
 	}
+
+	function toggleEditModal(breadData) {
+		breadData && setBreadClicked(breadData);
+		setIsEditModalOpen(!isEditModalOpen);
+	}
+
+	useEffect(() => {
+		console.log(breadClicked)
+	}, [breadClicked])
 
 	// Redirect user if they're logged in or not
 	useEffect(() => {
@@ -74,7 +85,14 @@ function Home() {
 
 	return (
 		<>
-			<ModalContext.Provider value={{ isDeleteModalOpen, toggleDeleteModal }}>
+			<ModalContext.Provider
+				value={{
+					isDeleteModalOpen,
+					toggleDeleteModal,
+					isEditModalOpen,
+					toggleEditModal,
+				}}
+			>
 				<Menu>
 					<MenuButton
 						p={["0.8rem"]}
@@ -128,6 +146,7 @@ function Home() {
 					})}
 				</>
 				<DeleteModal bread={breadClicked} />
+				<EditModal bread={breadClicked} />
 			</ModalContext.Provider>
 		</>
 	);

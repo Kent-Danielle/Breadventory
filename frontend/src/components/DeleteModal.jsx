@@ -14,6 +14,7 @@ import { useContext, useState } from "react";
 import { ModalContext } from "./Home";
 
 function DeleteModal(props) {
+	const { bread } = props.bread;
 	const { isDeleteModalOpen, toggleDeleteModal } = useContext(ModalContext);
 	const [error, setError] = useState(false);
 
@@ -24,12 +25,13 @@ function DeleteModal(props) {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				breadName: props.bread,
+				breadName: bread,
 			}),
 		});
 
 		if (response.ok) {
 			toggleDeleteModal();
+			window.location.reload();
 		} else {
 			setError(true);
 		}
@@ -40,7 +42,10 @@ function DeleteModal(props) {
 			<Modal
 				size={["xs", "sm"]}
 				isOpen={isDeleteModalOpen}
-				onClose={toggleDeleteModal}
+				onClose={() => {
+					setError(false);
+					toggleDeleteModal();
+				}}
 				isCentered
 			>
 				<ModalOverlay />
@@ -65,7 +70,7 @@ function DeleteModal(props) {
 							<>
 								Do you want to delete "
 								<Text color="red.400" width={"fit-content"} display={"inline"}>
-									{props.bread}
+									{bread}
 								</Text>
 								" ?
 							</>
@@ -73,7 +78,12 @@ function DeleteModal(props) {
 					</ModalHeader>
 
 					<ModalFooter pt={"1rem"} justifyContent={"center"}>
-						<Button onClick={deleteBread} colorScheme="orange" mr={3} isDisabled={error}>
+						<Button
+							onClick={deleteBread}
+							colorScheme="orange"
+							mr={3}
+							isDisabled={error}
+						>
 							Delete
 						</Button>
 						<Button onClick={toggleDeleteModal} variant="ghost">

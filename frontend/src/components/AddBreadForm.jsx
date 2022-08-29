@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { checkLogInStatus } from "./Redirect";
 
 function AddBreadForm() {
+	const navigate = useNavigate();
 	const [formValue, setFormValue] = useState({
 		breadName: "",
 		category: "",
@@ -72,7 +73,6 @@ function AddBreadForm() {
 		}
 	}
 
-	const navigate = useNavigate();
 	return (
 		<>
 			<Button

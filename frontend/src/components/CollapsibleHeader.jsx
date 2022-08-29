@@ -5,6 +5,7 @@ import {
 	AccordionPanel,
 	AccordionIcon,
 	SlideFade,
+	BreadcrumbLink,
 } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 import {
@@ -23,14 +24,14 @@ import BreadInput from "./BreadInput";
 import SaleInput from "./SaleInput";
 
 function CollapsibleHeaders(props) {
-	let breadSet = new Set();
+	let breadMap = new Map();
 
-	props.breads.forEach((element) => {
-		breadSet.add(element.bread);
+	props.breads.forEach((element, index) => {
+		breadMap.set(element.bread, index);
 	});
 
 	let breadOrder = props.orders.filter(function (order) {
-		return breadSet.has(order.bread);
+		return breadMap.has(order.bread);
 	});
 
 	function getContent(variant) {
@@ -52,19 +53,22 @@ function CollapsibleHeaders(props) {
 								</Tr>
 							</Thead>
 							<Tbody>
-								{breadOrder.map((bread, index) => (
-									<TableRow
-										key={index}
-										breadName={bread.bread}
-										sundayOrder={bread.sunday}
-										mondayOrder={bread.monday}
-										tuesdayOrder={bread.tuesday}
-										wednesdayOrder={bread.wednesday}
-										thursdayOrder={bread.thursday}
-										fridayOrder={bread.friday}
-										saturdayOrder={bread.saturday}
-									/>
-								))}
+								{breadOrder.map((bread, index) => {
+									return (
+										<TableRow
+											key={index}
+											data={props.breads[breadMap.get(bread.bread)]}
+											breadName={bread.bread}
+											sundayOrder={bread.sunday}
+											mondayOrder={bread.monday}
+											tuesdayOrder={bread.tuesday}
+											wednesdayOrder={bread.wednesday}
+											thursdayOrder={bread.thursday}
+											fridayOrder={bread.friday}
+											saturdayOrder={bread.saturday}
+										/>
+									);
+								})}
 							</Tbody>
 						</Table>
 					</TableContainer>
@@ -96,7 +100,11 @@ function CollapsibleHeaders(props) {
 
 	return (
 		<SlideFade in={true} offsetY={30}>
-			<Accordion defaultIndex={[(props.variant == "home" && 0)]} allowMultiple mb={"1em"}>
+			<Accordion
+				defaultIndex={[props.variant == "home" && 0]}
+				allowMultiple
+				mb={"1em"}
+			>
 				<AccordionItem border={"none"} borderRadius={"lg"}>
 					<h2>
 						<AccordionButton
