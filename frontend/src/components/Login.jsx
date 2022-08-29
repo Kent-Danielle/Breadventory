@@ -1,143 +1,128 @@
-import { useEffect, useState } from "react";
+import {
+	Alert,
+	AlertIcon,
+	AlertTitle,
+	Flex,
+	Button,
+	FormControl,
+	FormLabel,
+	InputRightElement,
+	Input,
+	Heading,
+	InputGroup,
+	FormErrorMessage,
+} from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import { Field, Formik, useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
-import { ReactSession } from "react-client-session";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Alert from "@mui/material/Alert";
-import { Fade } from "@mui/material";
+import * as Yup from "yup";
+import { setLogInStatus, checkLogInStatus } from "./Redirect";
+
 function Login() {
 	const navigate = useNavigate();
+	const [error, setError] = useState("");
+	const [show, setShow] = useState(false);
+	const togglePassword = () => setShow(!show);
 
-	// Redirect user if they're logged in or not
 	useEffect(() => {
-		const isLoggedIn = ReactSession.get("loggedIn");
+		const isLoggedIn = checkLogInStatus();
 
-		if (isLoggedIn) {
-			navigate("/home");
-		} else {
-			navigate("/login");
-		}
+		isLoggedIn ? navigate("/home") : navigate("/login");
 	}, []);
 
-	// Set state for input fields
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [error, setError] = useState("");
-
-	/**
-	 * Handle submit event of form.
-	 * Submits a POST request to backend API for auth
-	 */
-	async function authenticateUser(event) {
-		// To prevent the website from reloading
-		event.preventDefault();
-
-		// Send the POST request containint the input values from the form taken from the state
-		const response = await fetch("/login", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				username,
-				password,
-			}),
-		});
-
-		const data = await response.json();
-
-		if (data.loggedIn) {
-			ReactSession.set("loggedIn", true);
-			navigate("/home");
-		} else {
-			setError(data.error);
-		}
-	}
-
-	const theme = createTheme();
-
 	return (
-		<ThemeProvider theme={theme}>
-			<Container component="main" maxWidth="xs" sx={{ minHeight: "100%" }}>
-				<Box
-					height="100vh"
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						alignContent: "center",
-						justifyContent: "center",
-					}}
+		<Formik
+			initialValues={{ username: "", password: "" }}
+			validationSchema={Yup.object({
+				username: Yup.string()
+					.required("Username required")
+					.min(3, "Username is too short"),
+				password: Yup.string().required("Password is too short"),
+			})}
+			onSubmit={async (values) => {
+				const { username, password } = values;
+				const response = await fetch("/login", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						username,
+						password,
+					}),
+				});
+
+				const data = await response.json();
+
+				if (data.loggedIn) {
+					setLogInStatus(true);
+					navigate("/home");
+				} else {
+					setError(data.error);
+				}
+			}}
+		>
+			{(formik) => (
+				<Flex
+					direction={"column"}
+					as="form"
+					mx="auto"
+					w={["90%", 500]}
+					h="100vh"
+					justifyContent={"center"}
+					onSubmit={formik.handleSubmit}
 				>
-					<Typography
-						component="h1"
-						variant="h4"
-						textAlign="left"
-						sx={{ width: "100%" }}
+					<Heading alignSelf={"start"} mb={"2rem"}>
+						Sign Up
+					</Heading>
+					<FormControl
+						isInvalid={formik.errors.username && formik.touched.username}
 					>
-						Welcome
-					</Typography>
-					<Box
-						component="form"
-						onSubmit={authenticateUser}
-						noValidate
-						sx={{ mt: 2 }}
-					>
-						<TextField
-							margin="normal"
-							required
-							fullWidth
-							id="username"
-							label="Username"
-							type="text"
+						<FormLabel>Username</FormLabel>
+						<Field
+							as={Input}
 							name="username"
-							autoFocus
-							onChange={(e) => setUsername(e.target.value)}
-							value={username}
-							variant="standard"
+							placeholder="Enter username..."
+							{...formik.getFieldProps("username")}
 						/>
-						<TextField
-							margin="normal"
-							required
-							fullWidth
-							name="password"
-							label="Password"
-							type="password"
-							id="password"
-							onChange={(e) => setPassword(e.target.value)}
-							value={password}
-							variant="standard"
-						/>
-						<Box
-							sx={{ display: "flex", mb: 4, mt: 8 }}
-							justifyContent="flex-end"
-						>
-							<Button
-								type="submit"
-								variant="contained"
-								sx={{ minWidth: "25%" }}
-							>
-								Sign In
-							</Button>
-						</Box>
-						<Fade in={true}>
-							<Alert
-								variant="outlined"
-								severity="error"
-								sx={{ mb: 12, visibility: (error === "" ? "hidden" : "visible")}}
-							>
-								{error}
-							</Alert>
-						</Fade>
-					</Box>
-				</Box>
-			</Container>
-		</ThemeProvider>
+						<FormErrorMessage>{formik.errors.username}</FormErrorMessage>
+					</FormControl>
+					<FormControl
+						isInvalid={formik.errors.password && formik.touched.password}
+					>
+						<FormLabel>Password</FormLabel>
+						<InputGroup>
+							<Field
+								as={Input}
+								type={show ? "text" : "password"}
+								name="password"
+								placeholder="Enter password..."
+								{...formik.getFieldProps("password")}
+							/>
+							<InputRightElement width="4.5rem">
+								<Button h="1.75rem" size="sm" onClick={togglePassword}>
+									{show ? "Hide" : "Show"}
+								</Button>
+							</InputRightElement>
+						</InputGroup>
+						<FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+					</FormControl>
+					<Button alignSelf={"end"} my={"2rem"} type="submit">
+						Log in
+					</Button>
+					<Alert
+						borderRadius={"lg"}
+						visibility={error === "" ? "hidden" : "visible"}
+						w={["100%", "80%"]}
+						alignSelf={"center"}
+						status="error"
+					>
+						<AlertIcon />
+						<AlertTitle>{error}</AlertTitle>
+					</Alert>
+				</Flex>
+			)}
+		</Formik>
 	);
 }
 

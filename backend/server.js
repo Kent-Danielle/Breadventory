@@ -11,7 +11,7 @@ require("dotenv").config();
 // Initialized DB using an exported module from another file
 require("./initDB")();
 
-const ONE_DAY = 1000 * 60 * 60 * 24;
+const HALF_DAY = 43200000;
 
 // Session Setup
 app.use(cors())
@@ -21,7 +21,7 @@ app.use(
 		name: "LFMSession",
 		resave: false,
 		cookie: {
-			maxAge: ONE_DAY,
+			maxAge: HALF_DAY,
 		},
 		saveUninitialized: true,
 	})

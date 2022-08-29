@@ -1,24 +1,53 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { ReactSession } from "react-client-session";
-import { Flex, Spacer } from "@chakra-ui/react";
-import { Button, ButtonGroup } from "@chakra-ui/react";
-import CollapsibleTable from "./CollapsibleTable";
+import { useEffect, useState, createContext } from "react";
+import { HamburgerIcon } from "@chakra-ui/icons";
+import {
+	Button,
+	Box,
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	MenuItemOption,
+	MenuGroup,
+	MenuOptionGroup,
+	MenuDivider,
+	ButtonGroup,
+} from "@chakra-ui/react";
+import CollapsibleHeaders from "./CollapsibleHeader";
+import { setLogInStatus, checkLogInStatus } from "./Redirect";
+import DeleteModal from "./DeleteModal";
+import EditModal from "./EditModal";
 
-function Login() {
+export const ModalContext = createContext(null);
+
+function Home() {
 	const navigate = useNavigate();
-	let [breads, setBreads] = useState([]);
-	let [orders, setOrders] = useState([]);
+	const [breads, setBreads] = useState([]);
+	const [orders, setOrders] = useState([]);
+	const [breadClicked, setBreadClicked] = useState({});
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+	function toggleDeleteModal(breadData) {
+		breadData && setBreadClicked(breadData);
+		setIsDeleteModalOpen(!isDeleteModalOpen);
+	}
+
+	function toggleEditModal(breadData) {
+		breadData && setBreadClicked(breadData);
+		setIsEditModalOpen(!isEditModalOpen);
+	}
+
+	useEffect(() => {
+		console.log(breadClicked)
+	}, [breadClicked])
 
 	// Redirect user if they're logged in or not
 	useEffect(() => {
-		const isLoggedIn = ReactSession.get("loggedIn");
+		const isLoggedIn = checkLogInStatus();
 
-		if (isLoggedIn) {
-			navigate("/home");
-		} else {
-			navigate("/login");
-		}
+		isLoggedIn ? navigate("/home") : navigate("/login");
 
 		async function fetchBread() {
 			const response1 = await fetch("/data/getBreads", {
@@ -40,41 +69,87 @@ function Login() {
 		fetchBread();
 	}, []);
 
+	const handleLogout = async () => {
+		try {
+			const logoutResponse = await fetch("/logout", {
+				method: "POST",
+			});
+		} catch (err) {
+			console.log(err);
+		}
+
+		//remove local storage
+		setLogInStatus(false);
+		navigate("/login");
+	};
+
 	return (
-		<Flex justifyContent={"center"} height={"100%"}>
-			<Flex
-				bgColor="gray.50"
-				width={["30em", "48em"]}
-				padding={["1.4em", "2em"]}
-				direction={"column"}
-				overflowY={"scroll"}
+		<>
+			<ModalContext.Provider
+				value={{
+					isDeleteModalOpen,
+					toggleDeleteModal,
+					isEditModalOpen,
+					toggleEditModal,
+				}}
 			>
-				<Button
-					opacity={0.85}
-					alignSelf={"flex-start"}
-					mb={"2em"}
-					borderRadius={"full"}
-					px={"1.5em"}
-					py={"1em"}
-					bgColor={"carbon.400"}
-					color="white"
-					boxShadow={"xl"}
-				>
-					Add Bread
-				</Button>
-				{breads.map((bread, index) => {
-					return (
-						<CollapsibleTable
-							key={index}
-							breadCategory={bread._id}
-							breads={bread.records}
-							orders={orders}
-						/>
-					);
-				})}
-			</Flex>
-		</Flex>
+				<Menu>
+					<MenuButton
+						p={["0.8rem"]}
+						alignSelf={"flex-end"}
+						width={"fit-content"}
+						as={Button}
+					>
+						<HamburgerIcon />
+					</MenuButton>
+					<MenuList>
+						<MenuItem
+							onClick={() => {
+								navigate("/addbread");
+							}}
+						>
+							Add bread
+						</MenuItem>
+						<MenuItem onClick={handleLogout} color={"red.500"}>
+							Logout
+						</MenuItem>
+					</MenuList>
+				</Menu>
+
+				<>
+					<ButtonGroup mt={"3rem"}>
+						<Button
+							opacity={0.85}
+							alignSelf={"flex-start"}
+							mb={"2em"}
+							px={"1.5em"}
+							py={"1em"}
+							boxShadow={"md"}
+							onClick={() => {
+								navigate("/formpage");
+							}}
+						>
+							Order Bread
+						</Button>
+					</ButtonGroup>
+
+					{breads.map((bread, index) => {
+						return (
+							<CollapsibleHeaders
+								key={index}
+								variant="home"
+								breadCategory={bread._id}
+								breads={bread.records}
+								orders={orders}
+							/>
+						);
+					})}
+				</>
+				<DeleteModal bread={breadClicked} />
+				<EditModal bread={breadClicked} />
+			</ModalContext.Provider>
+		</>
 	);
 }
 
-export default Login;
+export default Home;

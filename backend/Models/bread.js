@@ -6,10 +6,15 @@ const breadSchema = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
+	specialAllowance: {
+		type: Number,
+	},
+	badSellDeduction: {
+		type: Number
+	},
 	category: {
 		type: String,
-	},
-	orderHistory: [mongoose.ObjectId],
+	}
 });
 
 module.exports = mongoose.model("bread", breadSchema);
