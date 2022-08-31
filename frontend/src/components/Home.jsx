@@ -29,8 +29,7 @@ function Home() {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-	function toggleDeleteModal(breadData) {
-		breadData && setBreadClicked(breadData);
+	function toggleDeleteModal() {
 		setIsDeleteModalOpen(!isDeleteModalOpen);
 	}
 
