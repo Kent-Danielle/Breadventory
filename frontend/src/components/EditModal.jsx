@@ -26,6 +26,7 @@ import {
 	SliderFilledTrack,
 	SliderThumb,
 	ModalCloseButton,
+	ButtonGroup,
 } from "@chakra-ui/react";
 import { useContext, useState, useEffect, useRef } from "react";
 import { ModalContext } from "./Home";
@@ -35,7 +36,8 @@ function EditModal(props) {
 	const { bread, category, specialAllowance, badSellDeduction } = props.bread;
 	const test = useRef(bread);
 	const navigate = useNavigate();
-	const { isEditModalOpen, toggleEditModal } = useContext(ModalContext);
+	const { isEditModalOpen, toggleEditModal, toggleDeleteModal } =
+		useContext(ModalContext);
 	const [error, setError] = useState(false);
 	const [formValue, setFormValue] = useState({
 		breadName: null,
@@ -62,19 +64,22 @@ function EditModal(props) {
 
 	async function handleSubmit(e) {
 		e.preventDefault();
-		const response = await fetch("/data/editBread", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				...formValue,
-				oldBread: bread,
-				oldCategory: category,
-				oldSpecialAllowance: specialAllowance,
-				oldBadSellDeduction: badSellDeduction,
-			}),
-		});
+		const response = await fetch(
+			"https://breadventory.herokuapp.com/data/editBread",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					...formValue,
+					oldBread: bread,
+					oldCategory: category,
+					oldSpecialAllowance: specialAllowance,
+					oldBadSellDeduction: badSellDeduction,
+				}),
+			}
+		);
 
 		if (response.ok) {
 			toggleEditModal();
@@ -105,11 +110,7 @@ function EditModal(props) {
 
 				<ModalContent>
 					<ModalCloseButton onClick={toggleEditModal} />
-					<ModalBody
-						pb={0}
-						p={"1rem"}
-						fontSize={["md", "lg"]}
-					>
+					<ModalBody pb={0} p={"1rem"} fontSize={["md", "lg"]}>
 						{error ? (
 							<Alert
 								borderRadius={"lg"}
@@ -174,7 +175,7 @@ function EditModal(props) {
 											justifyContent={"space-between"}
 										>
 											<NumberInput
-												w={["25%", "15%"]}
+												w={["25%", "20%"]}
 												size={["md", "lg"]}
 												min={0}
 												max={20}
@@ -194,7 +195,7 @@ function EditModal(props) {
 												</NumberInputStepper>
 											</NumberInput>
 											<Slider
-												w={["70%", "80%"]}
+												w={["70%", "75%"]}
 												min={0}
 												max={100}
 												onChange={(val) =>
@@ -227,7 +228,7 @@ function EditModal(props) {
 											justifyContent={"space-between"}
 										>
 											<NumberInput
-												w={["25%", "15%"]}
+												w={["25%", "20%"]}
 												size={["md", "lg"]}
 												min={0}
 												max={20}
@@ -247,7 +248,7 @@ function EditModal(props) {
 												</NumberInputStepper>
 											</NumberInput>
 											<Slider
-												w={["70%", "80%"]}
+												w={["70%", "75%"]}
 												min={0}
 												max={100}
 												onChange={(val) =>
@@ -267,9 +268,24 @@ function EditModal(props) {
 										</Flex>
 									</FormControl>
 
-									<Button alignSelf={"end"} my={"2rem"} type="submit">
-										Edit bread
-									</Button>
+									<ButtonGroup
+										display={"flex"}
+										justifyContent={"flex-end"}
+										mt={"2rem"}
+									>
+										<Button
+											colorScheme="carbon"
+											variant={"ghost"}
+											onClick={() => {
+												toggleDeleteModal();
+											}}
+										>
+											Delete bread
+										</Button>
+										<Button colorScheme="orange" type="submit">
+											Edit bread
+										</Button>
+									</ButtonGroup>
 								</Flex>
 							</>
 						)}

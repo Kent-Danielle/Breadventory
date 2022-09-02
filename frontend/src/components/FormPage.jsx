@@ -40,13 +40,13 @@ function FormPage() {
 	useEffect(() => {
 		let tempOrder = {};
 		async function fetchBread() {
-			const fetchBreadResponse = await fetch("/data/getBreads", {
+			const fetchBreadResponse = await fetch("https://breadventory.herokuapp.com/data/getBreads", {
 				method: "GET",
 			});
 
 			const fetchBreadResult = await fetchBreadResponse.json();
 
-			const fetchBreadOrder = await fetch("/data/getPrevOrders", {
+			const fetchBreadOrder = await fetch("https://breadventory.herokuapp.com/data/getPrevOrders", {
 				method: "GET",
 			});
 
@@ -92,7 +92,7 @@ function FormPage() {
 
 		switch (step) {
 			case 0:
-				const prevOrderResponse = await fetch("/data/addPrevOrders", {
+				const prevOrderResponse = await fetch("https://breadventory.herokuapp.com/data/addPrevOrders", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -101,7 +101,7 @@ function FormPage() {
 				}).then(setLoaded(true));
 				break;
 			case 1:
-				const calculatedOrderResponse = await fetch("/data/calculateOrder", {
+				const calculatedOrderResponse = await fetch("https://breadventory.herokuapp.com/data/calculateOrder", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -117,7 +117,7 @@ function FormPage() {
 
 				break;
 			case 2:
-				const todayOrderResponse = await fetch("/data/addTodayOrders", {
+				const todayOrderResponse = await fetch("https://breadventory.herokuapp.com/data/addTodayOrders", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
