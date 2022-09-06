@@ -1,3 +1,11 @@
+<p align="center">
+ Click here!
+ <a href="https://breadventory.netlify.app/">https://breadventory.netlify.app/</a>
+</p>
+<p align="center">
+ Username: Guest | Password: Bread
+</p>
+
 
 # Digital Bread Inventory and Ordering Web App
 
